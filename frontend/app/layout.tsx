@@ -31,14 +31,12 @@ export default function RootLayout(props: {children: ReactNode}) {
                     pauseOnHover
                     transition={Slide}
                 />
-                <Container fixed>
-                    <Box sx={{
-                        width: '100%', height: '100vh', overflow: 'auto',
-                        display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
-                    }}>
-                        {children}
-                    </Box>
-                </Container>
+                <Box sx={{
+                    width: '100%', height: '100vh', overflow: 'auto',
+                    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
+                }}>
+                    {children}
+                </Box>
             </ThemeProvider>
         </AppRouterCacheProvider>
         </body>

@@ -21,7 +21,7 @@ export default function Home() {
     }
 
     return (
-        <Card sx={{width: '50%', minWidth: 400}}>
+        <Card sx={{width: '50%', minWidth: 400}} elevation={3}>
             <CardMedia
                 component="img"
                 alt="Home page"
