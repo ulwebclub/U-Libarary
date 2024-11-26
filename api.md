@@ -1,6 +1,26 @@
 # api
 
-## /borrow
+---
+
+## /items
+
+* `get`
+* return all books & CDs
+
+## /items/borrow
+
+* `post`
+
+* ```
+    {
+    	id: string,
+        endTime: number
+    }
+    ```
+
+* admin
+
+## /items/return
 
 * `post`
 
@@ -10,32 +30,18 @@
     }
     ```
 
-## /return
+* admin
 
+## /items/reserve
 * `post`
-
 * ```
     {
     	id: string
     }
     ```
+* admin
 
-## /books
-
-* `get`
-* return all books
-
-## /cds
-
-* `get`
-* return all cds
-
-## /users
-
-* `get`
-* return all users
-
-## /books/new
+## /items/new/book
 
 * `post`
 
@@ -44,8 +50,9 @@
     	data: BookObject
     }
     ```
+* admin
 
-## /cds/new
+## /items/new/cd
 
 * `post`
 
@@ -54,6 +61,26 @@
     	data: CDObject
     }
     ```
+* admin
+
+## /items/delete
+
+* `post`
+
+* ```
+    {
+    	id: string
+    }
+    ```
+* admin
+
+---
+
+## /users
+
+* `get`
+* return all users
+* admin
 
 ## /users/new
 
@@ -64,6 +91,20 @@
     	data: UserObject
     }
     ```
+
+## /users/delete
+
+* `post`
+
+* ```
+    {
+    	id: string
+    }
+    ```
+
+* admin
+
+---
 
 ## /auth
 
@@ -77,16 +118,3 @@
     ```
 
 * return auth cookie
-
-## /users/delete
-
-* `post`
-
-* ```
-    {
-    	id: string
-    }
-    ```
-
-> 还有Books和CDs，都和users一样
-
