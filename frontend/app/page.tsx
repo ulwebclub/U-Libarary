@@ -1,77 +1,79 @@
-"use client";
+'use client'
 
-import React from "react";
-import Link from "next/link";
-import { SmileFilled } from "@ant-design/icons";
-import {
-  Button,
-  DatePicker,
-  Form,
-  InputNumber,
-  Select,
-  Slider,
-  Switch,
-  ConfigProvider,
-} from "antd";
-import theme from "./themeConfig";
+import {Box, Button, Card, CardActions, CardContent, CardMedia, TextField, Typography} from "@mui/material";
+import {useState} from "react";
+import {toast} from "react-toastify";
 
-const HomePage = () => (
-  <ConfigProvider theme={theme}>
-    <div style={{ padding: 100, height: "100vh" }}>
-      <div className="text-center mb-5">
-        <Link href="#" className="logo mr-0">
-          <SmileFilled style={{ fontSize: 48 }} />
-        </Link>
-        <p className="mb-0 mt-3 text-disabled">Welcome to the world !</p>
-      </div>
-      <div>
-        <Form
-          layout="horizontal"
-          size={"large"}
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 8 }}
-        >
-          <Form.Item label="Input Number">
-            <InputNumber
-              min={1}
-              max={10}
-              style={{ width: 100 }}
-              defaultValue={3}
-              name="inputNumber"
+export default function Home() {
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+
+    function handleLogin() {
+        if (!username) {
+            toast.error("Username is required");
+            return;
+        }
+        if (!password) {
+            toast.error("Password is required");
+            return;
+        }
+        // login
+    }
+
+    return (
+        <Card sx={{width: '50%', minWidth: 400}}>
+            <CardMedia
+                component="img"
+                alt="Home page"
+                sx={{height: '40%'}}
+                image="/login.png"
             />
-          </Form.Item>
-          <Form.Item label="Switch">
-            <Switch defaultChecked />
-          </Form.Item>
-          <Form.Item label="Slider">
-            <Slider defaultValue={70} />
-          </Form.Item>
-          <Form.Item label="Select">
-            <Select
-              defaultValue="lucy"
-              style={{ width: 192 }}
-              options={[
-                { value: "jack", label: "Jack" },
-                { value: "lucy", label: "Lucy" },
-                { value: "Yiminghe", label: "yiminghe" },
-                { value: "lijianan", label: "lijianan" },
-                { value: "disabled", label: "Disabled", disabled: true },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item label="DatePicker">
-            <DatePicker showTime />
-          </Form.Item>
-          <Form.Item style={{ marginTop: 48 }} wrapperCol={{ offset: 8 }}>
-            <Button type="primary" htmlType="submit">
-              OK
-            </Button>
-            <Button style={{ marginLeft: 8 }}>Cancel</Button>
-          </Form.Item>
-        </Form>
-      </div>
-    </div>
-  </ConfigProvider>
-);
-
-export default HomePage;
+            <Box sx={{p: 3}}>
+                <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                        U-Library
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        An example library system designed for a middle school.
+                    </Typography>
+                </CardContent>
+                <CardActions>
+                    <Box sx={{
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                        width: '100%', gap: 2, height: '100%'
+                    }} component="form">
+                        <TextField
+                            label="Username / Email"
+                            variant="outlined"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            sx={{width: '100%'}}
+                        />
+                        <TextField
+                            label="Password"
+                            variant="outlined"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            type="password"
+                            sx={{width: '100%'}}
+                        />
+                        <Box sx={{
+                            display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+                            width: '100%', pt: 1
+                        }}>
+                            <Button>
+                                Register
+                            </Button>
+                            <Button
+                                variant="contained"
+                                onClick={() => handleLogin()}
+                            >
+                                Login
+                            </Button>
+                        </Box>
+                    </Box>
+                </CardActions>
+            </Box>
+        </Card>
+    );
+}
