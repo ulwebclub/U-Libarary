@@ -1,7 +1,7 @@
 import {Autocomplete, Box, IconButton, Paper, TextField, Toolbar, Tooltip, Typography} from "@mui/material";
 import {DataGrid, GridColDef, GridRenderEditCellParams, useGridApiContext} from "@mui/x-data-grid";
 import {useEffect, useState} from "react";
-import {User, UserRole} from "../../../common/user";
+import {UserObejct, UserRole} from "../../../common/User";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 
@@ -59,9 +59,9 @@ function RoleEditCell(props: GridRenderEditCellParams<any, UserRole>) {
 }
 
 interface EnhancedTableToolbarProps {
-    users: User[];
+    users: UserObejct[];
     selectedIDs: string[];
-    setUsers: (users: User[]) => void;
+    setUsers: (users: UserObejct[]) => void;
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
@@ -70,7 +70,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     const numSelected = selectedIDs.length;
 
     function handleDelete() {
-        const newUsers: User[] = [];
+        const newUsers: UserObejct[] = [];
         users.forEach((user) => {
             if (!selectedIDs.includes(user.id)) {
                 newUsers.push(user);
@@ -128,7 +128,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 }
 
 export default function UserTab() {
-    const [users, _setUsers] = useState<User[]>([]);
+    const [users, _setUsers] = useState<UserObejct[]>([]);
     const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
 
     useEffect(() => {
@@ -139,7 +139,7 @@ export default function UserTab() {
         ]);
     }, []);
 
-    function setUsers(newUsers: User[]) {
+    function setUsers(newUsers: UserObejct[]) {
         _setUsers(newUsers);
     }
 
