@@ -1,0 +1,90 @@
+{
+  "libraryName": "Ulink Library",
+  "settings": {
+    "allowedDomain": [
+      "ulink.cn",
+      "cic-edu.cn",
+      "createchstudio.com",
+      "atcrea.tech"
+    ]
+  },
+  "user": [
+    {
+      "id": "0",
+      "username": "Administrator",
+      "email": "",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "Admin"
+    },
+    {
+      "id": "1",
+      "username": "Iewnfod",
+      "email": "ziqian.wu@ulink.cn",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "Admin"
+    },
+    {
+      "id": "2",
+      "username": "lightum_cc",
+      "email": "jessiezhu@createchstudio.com",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "Admin"
+    },
+    {
+      "id": "3",
+      "username": "soap",
+      "email": "ze.lan@ulink.cn",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "User"
+    },
+    {
+      "id": "4",
+      "username": "Lostelk",
+      "email": "zekai.lu@ulink.cn",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "User"
+    }
+  ],
+  "inventory": [
+    {
+      "title": "Borrowed And Reserved Book",
+      "type": "Book",
+      "author": "Jessie Zhu",
+      "id": "1",
+      "isbn": "97811124983317",
+      "borrowed": true,
+      "expectReturnTime": "2024-12-27T09:00:00",
+      "reserved": true
+    },
+    {
+      "title": "Borrowed And Not Reserved Book",
+      "type": "Book",
+      "author": "Maggie Hu",
+      "id": "2",
+      "isbn": "9781112498331",
+      "borrowed": true,
+      "expectReturnTime": "2024-12-27T09:00:00",
+      "reserved": false
+    },
+    {
+      "title": "Not Borrowed And Reserved CD",
+      "type": "CD",
+      "author": "Jessie Zhu",
+      "id": "3",
+      "isbn": "9781112498331",
+      "borrowed": false,
+      "expectReturnTime": "2024-12-27T09:00:00",
+      "reserved": true
+    },
+    {
+      "title": "Not Borrowed And Not Reserved",
+      "type": "CD",
+      "author": "Maggie Hu",
+      "id": "4",
+      "isbn": "9781112498331",
+      "borrowed": false,
+      "expectReturnTime": "2024-12-27T09:00:00",
+      "reserved": false
+    }
+  ]
+}
