@@ -6,13 +6,13 @@ import BookTab from "@/app/admin/BookTab";
 import UserTab from "@/app/admin/UserTab";
 
 type tabObject = {
-    label: string;
+    label: string,
     element: ReactNode,
 }
 
 const tabs: tabObject[] = [
     {
-        label: "Books",
+        label: "Books & CDs",
         element: <BookTab/>
     },
     {
@@ -34,14 +34,12 @@ export default function Page() {
     return (
         <Box sx={{
             flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: '100%',
-            flexDirection: 'row', justifyContent: 'space-between', width: '100%',
-            alignItems: 'flex-start'
+            flexDirection: 'column', justifyContent: 'space-between', width: '100%',
+            alignItems: 'center'
         }}>
             <Tabs
-                orientation="vertical"
                 variant="standard"
                 value={tabIndex}
-                sx={{ borderRight: 1, borderColor: 'divider' }}
             >
                 {
                     tabs.map((tab, index) => (
