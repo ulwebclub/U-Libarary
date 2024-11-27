@@ -18,6 +18,7 @@ export default function BookTab() {
             editable: true,
             renderEditCell: AutoCompleteEditCellBuilder(Object.values(InventoryType))
         },
+        { field: 'isbn', headerName: 'ISBN', editable: true },
         { field: 'author', headerName: 'Author', editable: true },
         { field: 'title', headerName: 'Title', editable: true, flex: 1 },
         {
