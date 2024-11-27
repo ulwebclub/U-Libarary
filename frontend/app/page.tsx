@@ -3,14 +3,15 @@
 import {Box, Button, Card, CardActions, CardContent, CardMedia, TextField, Typography} from "@mui/material";
 import {useState} from "react";
 import {toast} from "react-toastify";
+import axios from "axios";
 
 export default function Home() {
-    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     function handleLogin() {
-        if (!username) {
-            toast.error("Username is required");
+        if (!email) {
+            toast.error("Email is required");
             return;
         }
         if (!password) {
@@ -43,10 +44,11 @@ export default function Home() {
                         width: '100%', gap: 2, height: '100%'
                     }} component="form">
                         <TextField
-                            label="Username / Email"
+                            label="Email"
                             variant="outlined"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            value={email}
+                            type="email"
+                            onChange={(e) => setEmail(e.target.value)}
                             sx={{width: '100%'}}
                         />
                         <TextField

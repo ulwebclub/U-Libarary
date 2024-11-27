@@ -3,10 +3,11 @@ import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme';
 import {Roboto} from "next/font/google";
 import {ReactNode} from "react";
-import {Box, Container} from "@mui/material";
+import {Box, Stack} from "@mui/material";
 import {Slide, ToastContainer} from "react-toastify";
 // required by react-toastify
 import 'react-toastify/dist/ReactToastify.css';
+import MainTabs from "@/app/MainTabs";
 
 const roboto = Roboto({
     weight: ['300', '400', '500', '700'],
@@ -31,12 +32,18 @@ export default function RootLayout(props: {children: ReactNode}) {
                     pauseOnHover
                     transition={Slide}
                 />
-                <Box sx={{
-                    width: '100%', height: '100vh', overflow: 'auto',
-                    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
+                <Stack sx={{
+                    position: 'absolute', top: 0, left: 0, m: 0, p: 0,
+                    width: '100vw', height: '100vh', overflow: 'hidden'
                 }}>
-                    {children}
-                </Box>
+                    <MainTabs/>
+                    <Box sx={{
+                        flexGrow: 1, width: '100%', height: '100%',
+                        display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
+                    }}>
+                        {children}
+                    </Box>
+                </Stack>
             </ThemeProvider>
         </AppRouterCacheProvider>
         </body>
