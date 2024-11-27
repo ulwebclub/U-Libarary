@@ -4,6 +4,7 @@ import {useEffect, useState} from "react";
 import {UserObject, UserRole} from "../../../common/User";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {AutoCompleteEditCellBuilder} from "@/app/admin/AutoCompleteEditCell";
+import {getReq} from "@/app/net";
 
 export default function UserTab() {
     const [users, setUsers] = useState<UserObject[]>([]);
@@ -43,6 +44,12 @@ export default function UserTab() {
             setUsers(users.filter(user => user.id !== row.id));
         }
     }
+
+    useEffect(() => {
+        getReq('/user').then((res) => {
+            setUsers(res.data);
+        });
+    }, []);
 
     return (
         <Box sx={{

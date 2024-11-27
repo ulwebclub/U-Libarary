@@ -31,6 +31,10 @@ function a11yProps(index: number) {
 export default function Page() {
     const [tabIndex, setTabIndex] = useState(0);
 
+    function TabContent() {
+        return tabs[tabIndex].element;
+    }
+
     return (
         <Box sx={{
             flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: '100%',
@@ -52,15 +56,7 @@ export default function Page() {
                     ))
                 }
             </Tabs>
-            {
-                tabs.map((tab, index) => (
-                    index !== tabIndex ? <></> : (
-                        <Box sx={{height: '100%', width: '100%', p: 3}}>
-                            { tab.element }
-                        </Box>
-                    )
-                ))
-            }
+            <TabContent/>
         </Box>
     );
 }
