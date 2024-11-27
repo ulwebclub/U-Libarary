@@ -5,6 +5,8 @@ import {logger} from '@bogeychan/elysia-logger';
 import jwt from "@elysiajs/jwt";
 import dotenv from 'dotenv';
 import {Auth} from "./Runtime/Auth";
+import {inventoryGroup} from "./Group/Inventory";
+import {userGroup} from "./Group/User";
 
 dotenv.config()
 export const BASE_URL = process.env.LIB_BASE_URL || 'http://localhost:3000';
@@ -35,7 +37,7 @@ new Elysia()
             secret: JWT_SECRET,
         })
     )
-    .get('/', () => {return  'Welcome to VGORC TM API Backend'})
+    .get('/', () => {return  'Welcome to U-Library API Backend'})
     .get('/ping', () => {return 'Pong!'})
     .get('/env/:prefix', async ({params: {prefix}}) => {
         let env: {[Keys: string]: string} = {};
@@ -89,6 +91,8 @@ new Elysia()
             cookie: t.String()
         })
     })
+    .use(inventoryGroup)
+    .use(userGroup)
     .listen(3000);
 
 console.log(

@@ -1,6 +1,7 @@
 import {Elysia, error, t} from "elysia";
 import {checkJWT} from "../Runtime/Auth";
 import {User} from "../Runtime/User";
+import {UserRole} from "../../../common/User";
 
 export const userGroup = new Elysia()
     .decorate('user', new User())
@@ -14,7 +15,7 @@ export const userGroup = new Elysia()
                     }
                     return await checkJWT(permission.value || "", "admin", error)
                 }
-            },(app) => app
+            }, (app) => app
                 .get('', ({ user }) => user.get())
                 .post('update', ({ user, body: { data }, error }) => {
                     try {
@@ -23,14 +24,32 @@ export const userGroup = new Elysia()
                     } catch (e) {
                         return error(406, e);
                     }
-                },{
+                }, {
                     body: t.Object({
                         data: t.Object({
                             id: t.String(),
                             username: t.String(),
                             email: t.String(),
                             password: t.String(),
-                            role: t.String()
+                            role: t.Enum(UserRole)
+                        })
+                    })
+                })
+                .post('add', ({ user, body: { data }, error }) => {
+                    try {
+                        user.add(data);
+                        return user.get();
+                    } catch (e) {
+                        return error(406, e);
+                    }
+                }, {
+                    body: t.Object({
+                        data: t.Object({
+                            id: t.String(),
+                            username: t.String(),
+                            email: t.String(),
+                            password: t.String(),
+                            role: t.Enum(UserRole)
                         })
                     })
                 })
@@ -41,6 +60,10 @@ export const userGroup = new Elysia()
                     } catch (e) {
                         return error(406, e);
                     }
-                }
+                }, {
+                    params: t.Object({
+                        id: t.String()
+                    })
+                })
         )
     );
