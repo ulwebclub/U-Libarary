@@ -1,12 +1,12 @@
 import {Box} from "@mui/material";
 import {DataGrid, GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
 import {useEffect, useState} from "react";
-import {UserObejct, UserRole} from "../../../common/user";
+import {UserObject, UserRole} from "../../../common/user";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {AutoCompleteEditCellBuilder} from "@/app/admin/AutoCompleteEditCell";
 
 export default function UserTab() {
-    const [users, setUsers] = useState<UserObejct[]>([]);
+    const [users, setUsers] = useState<UserObject[]>([]);
 
     const paginationModel = { page: 0, pageSize: 10 };
 
@@ -37,7 +37,7 @@ export default function UserTab() {
         }
     ];
 
-    function handleDeleteClick(row: UserObejct) {
+    function handleDeleteClick(row: UserObject) {
         const sure = confirm(`Make sure you want to delete user ${row.username}`);
         if (sure) {
             setUsers(users.filter(user => user.id !== row.id));

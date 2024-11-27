@@ -1,9 +1,9 @@
 import {Utils} from "./Utils";
 import {Data} from "../../../common/Data";
-import {UserObejct} from "../../../common/User";
+import {UserObject} from "../../../common/User";
 
 export class User {
-    data: UserObejct[] = [];
+    data: UserObject[] = [];
     db: Utils = new Utils();
 
     _indexOf(id: string) {
@@ -20,7 +20,7 @@ export class User {
         return this.db.getData().user;
     }
 
-    add(obj: UserObejct) {
+    add(obj: UserObject) {
         if (obj.username.length === 0) {
             throw "Username should not be empty";
         }
@@ -55,7 +55,7 @@ export class User {
         this._update();
     }
 
-    update(obj: UserObejct) {
+    update(obj: UserObject) {
         let index = this._indexOf(obj.id);
         if (index === -1) {
             throw "User not found";

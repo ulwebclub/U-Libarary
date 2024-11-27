@@ -1,4 +1,4 @@
-import {UserObejct} from "./User";
+import {UserObject} from "./User";
 import {InventoryObject} from "./Inventory";
 
 export interface Data {
@@ -6,7 +6,7 @@ export interface Data {
     settings: {
         "allowedDomain": string[]
     }
-    user: UserObejct[];
+    user: UserObject[];
     inventory: InventoryObject[]
 }
 
