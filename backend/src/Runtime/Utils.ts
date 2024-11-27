@@ -27,7 +27,7 @@ export class Utils {
     initAuth(adminHash: string) {
         let newData: Data = this.getData();
         newData.user = [
-            {id: "0", username: "Administator", email: "", password: adminHash, role: UserRole.Admin}
+            {id: "0", username: "Administator", email: "admin", password: adminHash, role: UserRole.Admin}
         ];
         this.updateData(newData);
     }

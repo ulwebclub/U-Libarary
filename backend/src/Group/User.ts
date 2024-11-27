@@ -13,7 +13,7 @@ export const userGroup = new Elysia()
                     if (permission === undefined) {
                         return error(401, "Unauthorized");
                     }
-                    return await checkJWT(permission.value || "", "admin", error)
+                    return await checkJWT(permission.value || "", "Admin", error)
                 }
             }, (app) => app
                 .get('', ({ user }) => user.get())

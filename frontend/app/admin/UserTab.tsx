@@ -1,7 +1,7 @@
 import {Box} from "@mui/material";
 import {DataGrid, GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
 import {useEffect, useState} from "react";
-import {UserObject, UserRole} from "../../../common/user";
+import {UserObject, UserRole} from "../../../common/User";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {AutoCompleteEditCellBuilder} from "@/app/admin/AutoCompleteEditCell";
 

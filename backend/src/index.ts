@@ -1,4 +1,4 @@
-import {Elysia, t} from 'elysia';
+import {Elysia, error, t} from 'elysia';
 import {swagger} from '@elysiajs/swagger';
 import {cors} from "@elysiajs/cors";
 import {logger} from '@bogeychan/elysia-logger';
@@ -59,32 +59,38 @@ new Elysia()
         })
     })
     .decorate('auth', new Auth())
-    .post('/auth/:module', async ({ auth, jwt, cookie: { permission }, params ,body: {authId, authPassword}}) => {
-        if (auth.checkAuth(authId, authPassword)) {
-            permission.set({
-                value: await jwt.sign(params),
-                httpOnly: true,
-                maxAge: 5 * 86400,
-            })
+    .post('/auth', async ({ auth, jwt, cookie: { permission } ,body: {email, password}}) => {
+        try {
+            let authorizeAnswer = auth.checkAuth(email, password);
+            if (authorizeAnswer !== "") {
+                permission.set({
+                    value: await jwt.sign({authorizeAnswer}),
+                    httpOnly: true,
+                    maxAge: 5 * 86400,
+                })
+                return permission.cookie;
+            }
+        } catch (e) {
+            return error(401, e);
         }
-        return permission.cookie;
     }, {
         body: t.Object({
-            authId: t.String(),
-            authPassword: t.String()
-        }),
-        params: t.Object({
-            module: t.String()
+            email: t.String(),
+            password: t.String()
         })
     })
     .post("/auth/check", async ({ jwt, body }) => {
         const token = await jwt.verify(body.cookie);
         // @ts-ignore
-        if (token.module === 'admin') {
+        if (token.authorizeAnswer === 'Admin') {
             return true;
         }
         // @ts-ignore
-        return token.module === body.module;
+        if (token.authorizeAnswer === undefined || body.authorizeAnswer === undefined) {
+            return false
+        }
+        // @ts-ignore
+        return token.authorizeAnswer === body.authorizeAnswer;
     }, {
         body: t.Object({
             module: t.String(),

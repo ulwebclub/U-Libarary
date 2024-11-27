@@ -2,17 +2,20 @@ import {Utils} from "./Utils";
 import axios from "axios";
 import {BASE_URL} from "../index";
 import {ElysiaCustomStatusResponse} from "elysia/dist/error";
+import {UserObject, UserRole} from "../../../common/User";
 
 export class Auth {
     db: Utils = new Utils();
+    data: UserObject[] = this.db.getData().user;
 
-    checkAuth(id: string, password : string): boolean {
-        for (const auth of this.db.getData().user) {
-            if (auth.id === id && auth.password === password) {
-                return true;
+    checkAuth(email: string, password : string): string {
+        let allUsers = this.data;
+        for (let i = 0; i < allUsers.length; i++) {
+            if (allUsers[i].email === email && allUsers[i].password === password) {
+                return allUsers[i].role
             }
         }
-        return false;
+        throw "Unauthorized";
     }
 }
 

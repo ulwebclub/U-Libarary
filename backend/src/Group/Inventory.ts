@@ -13,7 +13,7 @@ export const inventoryGroup = new Elysia()
                     if (permission === undefined) {
                         return error(401, "Unauthorized");
                     }
-                    return await checkJWT(permission.value || "", "admin", error)
+                    return await checkJWT(permission.value || "", "Admin", error)
                 }
             },(app) => app
 
@@ -25,7 +25,7 @@ export const inventoryGroup = new Elysia()
                     if (permission === undefined) {
                         return error(401, "Unauthorized");
                     }
-                    return await checkJWT(permission.value || "", "user", error)
+                    return await checkJWT(permission.value || "", "User", error)
                 }
             },(app) => app
                 .post('borrow', ({ inventory, body: { data }, error }) => {
