@@ -110,7 +110,7 @@ export class User {
 
     update(obj: UserUpdateObject) {
         this._refreshData()
-        
+
         let index = this._indexOf(obj.id);
         if (index === -1) {
             throw "User not found";
