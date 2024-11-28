@@ -25,10 +25,6 @@ function isOverdue(item: InventoryObject) {
     return now > expectReturnTime ? "Yes" : "No";
 }
 
-/*
-{title: "Book 1", type: "Book", author: "Author 1", id: "1", isbn: "9788175257665", overdue: true}
-*/
-
 const paginationModel = { page: 0, pageSize: 10 };
 
 const getBackgroundColor = (color: string, theme: Theme, coefficient: number) => ({
