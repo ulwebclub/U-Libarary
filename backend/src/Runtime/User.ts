@@ -50,7 +50,9 @@ export class User {
 
         try {
             let decodedEmail: string = JSON.parse(base64.decode(cookie.split(".")[1])).email;
-            return this._findUserByEmail(decodedEmail);
+            let me = this._findUserByEmail(decodedEmail);
+            if (me) me.password = "";
+            return me
         } catch (e) {
             throw "Invalid Cookie";
         }

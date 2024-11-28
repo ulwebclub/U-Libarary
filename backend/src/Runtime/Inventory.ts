@@ -41,7 +41,7 @@ export class Inventory {
     }
 
     _getNewId() {
-        return this.db.getData().inventory.length.toString();
+        return (this.db.getData().inventory.length + 1).toString();
     }
 
     get() {
@@ -93,7 +93,7 @@ export class Inventory {
             if (this.inventoryData[index].reserved) {
                 throw "Inventory is Reserved"
             }
-            this.inventoryData.slice(index, 1);
+            this.inventoryData.splice(index, 1);
         }
         this._update()
     }
