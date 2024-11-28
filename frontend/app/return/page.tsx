@@ -2,30 +2,24 @@
 
 import * as React from "react";
 import {useState} from "react";
-import {DataGrid} from "@mui/x-data-grid";
+import {DataGrid, GridColDef, GridRenderCellParams} from "@mui/x-data-grid";
 import {Box, Button, darken, lighten, PaletteColor, styled, Theme} from "@mui/material";
 import {InventoryObject, InventoryType} from "../../../common/Inventory";
+import CloseIcon from '@mui/icons-material/Close';
+import DoneIcon from '@mui/icons-material/Done';
+import {SvgIconComponent} from "@mui/icons-material";
 
 export interface BorrowedInventoryObject extends InventoryObject {
-    overdue: string;
+    overdue: SvgIconComponent;
 }
-
-const cols = [
-    {field: "id", headerName: "ID", width: 60},
-    {field: "title", headerName: "Title", width: 240},
-    {field: "author", headerName: "Author", width: 165},
-    {field: "type", headerName: "Type", width: 60},
-    {field: "isbn", headerName: "ISBN", width: 135},
-    {field: "overdue", headerName: "Overdue?", width: 80},
-];
 
 function isOverdue(item: InventoryObject) {
     const now = new Date();
     const expectReturnTime = new Date(item.expectReturnTime);
-    return now > expectReturnTime ? "Yes" : "No";
+    return now > expectReturnTime ? DoneIcon : CloseIcon;
 }
 
-const paginationModel = { page: 0, pageSize: 10 };
+const paginationModel = {page: 0, pageSize: 10};
 
 const getBackgroundColor = (color: string, theme: Theme, coefficient: number) => ({
     backgroundColor: darken(color, coefficient),
@@ -42,20 +36,40 @@ const ReturnDataGrid = styled(DataGrid)(({theme}) => ({
         },
         '&.Mui-selected': {
             ...getBackgroundColor(theme.palette.warning.main, theme, 0.5),
-        '&:hover': {
-            ...getBackgroundColor(theme.palette.warning.main, theme, 0.4),
+            '&:hover': {
+                ...getBackgroundColor(theme.palette.warning.main, theme, 0.4),
             },
         },
     },
 }));
 
-export default function Page(){
+export default function Page() {
     const [items, setItems] = useState<BorrowedInventoryObject[]>([]);
 
+    const cols: GridColDef[] = [
+        {field: "id", headerName: "ID", width: 60},
+        {field: "title", headerName: "Title", width: 240},
+        {field: "author", headerName: "Author", width: 165},
+        {field: "type", headerName: "Type", width: 60},
+        {field: "isbn", headerName: "ISBN", width: 135},
+        {
+            field: "overdue",
+            headerName: "Overdue?",
+            width: 80,
+            renderCell: (params: GridRenderCellParams) => {
+                const Icon = params.value;
+                return <Box sx={{
+                    height: '100%', width: '100%',
+                    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
+                }}> < Icon/>
+                </Box>;
+            }
+        },
+    ];
 
     return (
-        <Box sx = {{
-            height: '100%', width: '80%', minWidth: 400,
+        <Box sx={{
+            height: '100%', width: '100%',
             display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
             gap: 2, p: 3
         }}>
@@ -70,11 +84,11 @@ export default function Page(){
                     width: '100%',
                     minWidth: 375
                 }}
-                getRowClassName={(params) => params.row.overdue == "Yes" ? 'highlighted-row' : ''}
+                getRowClassName={(params) => params.row.overdue == DoneIcon ? 'highlighted-row' : ''}
             />
             <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', width: '100%'}}>
                 <Button
-                    variant = "contained"
+                    variant="contained"
                 >
                     Return selected
                 </Button>
