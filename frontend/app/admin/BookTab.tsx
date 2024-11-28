@@ -1,15 +1,17 @@
 import {Box, Button} from "@mui/material";
-import {DataGrid, GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
+import {DataGrid, GridActionsCellItem, GridColDef, GridRowId, useGridApiRef} from "@mui/x-data-grid";
 import {useEffect, useState} from "react";
 import {EMPTY_INVENTORY, InventoryObject, InventoryType} from "../../../common/Inventory";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import {AutoCompleteEditCellBuilder} from "@/app/admin/AutoCompleteEditCell";
-import {getReq} from "@/app/net";
+import {deleteReq, getReq, postReq} from "@/app/net";
 import AddIcon from '@mui/icons-material/Add';
+import {toast} from "react-toastify";
 
 export default function BookTab() {
     const [items, setItems] = useState<InventoryObject[]>([]);
     const [loading, setLoading] = useState(false);
+    const apiRef = useGridApiRef();
 
     const paginationModel = { page: 0, pageSize: 10 };
 
@@ -49,9 +51,12 @@ export default function BookTab() {
             return;
         }
 
-        const sure = confirm(`Make sure you want to delete this inventory`);
+        const sure = confirm(`Make sure you want to delete this inventory ${row.id}`);
         if (sure) {
-            setItems(items.filter(items => items.id !== row.id));
+            deleteReq(`/inventory/delete/${row.id}`).then(() => {
+                setItems(items.filter(items => items.id !== row.id));
+                toast.success("Delete successfully");
+            });
         }
     }
 
@@ -62,9 +67,33 @@ export default function BookTab() {
         ]);
     }
 
-    function handleSaveRow(row: InventoryObject) {
-        const index = items.findIndex(item => item.id === row.id);
-        if (index === -1) return;
+    function handleSaveRow(id: GridRowId, field: string) {
+        const row = apiRef.current.getRowWithUpdatedValues(id, field);
+        if (row.id.length === 0) {
+            postReq('/inventory/add', {
+                data: {
+                    isbn: row.isbn,
+                    author: row.author,
+                    title: row.title,
+                    type: row.type
+                }
+            }).then((res) => {
+                if (res) {
+                    setItems((oldItems) => {
+                        let newItems = oldItems.filter(item => item.id !== row.id);
+                        newItems.push(res);
+                        return newItems;
+                    });
+                    toast.success("Save successfully");
+                }
+            });
+        } else {
+            postReq('/inventory/update', {
+                data: row
+            }).then(() => {
+                toast.success("Save successfully");
+            });
+        }
     }
 
     useEffect(() => {
@@ -94,6 +123,7 @@ export default function BookTab() {
                 </Button>
             </Box>
             <DataGrid
+                apiRef={apiRef}
                 rows={items}
                 columns={columns}
                 loading={loading}
@@ -102,7 +132,7 @@ export default function BookTab() {
                 pageSizeOptions={[10, 50, 100]}
                 initialState={{ pagination: { paginationModel } }}
                 onRowEditStop={(params) => {
-                    handleSaveRow(params.row);
+                    handleSaveRow(params.id, params.field || "");
                 }}
                 sx={{width: '100%', flexGrow: 1}}
             />

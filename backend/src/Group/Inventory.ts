@@ -47,6 +47,13 @@ export const inventoryGroup = new Elysia()
                         })
                     })
                 })
+                .delete('delete/:id', ({ inventory, params: { id }, error }) => {
+                    inventory.delete(id);
+                }, {
+                    params: t.Object({
+                        id: t.String()
+                    })
+                })
         )
         // Guard of User Actions
         .guard(
