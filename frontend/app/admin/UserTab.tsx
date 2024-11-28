@@ -4,10 +4,11 @@ import {useEffect, useState} from "react";
 import {UserObject, UserRole} from "../../../common/User";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {AutoCompleteEditCellBuilder} from "@/app/admin/AutoCompleteEditCell";
-import {getReq} from "@/app/net";
+import {deleteReq, getReq} from "@/app/net";
 
 export default function UserTab() {
     const [users, setUsers] = useState<UserObject[]>([]);
+    const [loading, setLoading] = useState(false);
 
     const paginationModel = { page: 0, pageSize: 10 };
 
@@ -41,14 +42,19 @@ export default function UserTab() {
     function handleDeleteClick(row: UserObject) {
         const sure = confirm(`Make sure you want to delete user ${row.username}`);
         if (sure) {
-            setUsers(users.filter(user => user.id !== row.id));
+            deleteReq(`/user/delete/${row.id}`).then((res) => {
+                console.log(res);
+                setUsers(users.filter(user => user.id !== row.id));
+            });
         }
     }
 
     useEffect(() => {
+        setLoading(true);
         getReq('/user').then((res) => {
             if (res) {
                 setUsers(res);
+                setLoading(false);
             }
         });
     }, []);
@@ -61,11 +67,12 @@ export default function UserTab() {
             <DataGrid
                 rows={users}
                 columns={columns}
+                loading={loading}
                 editMode="row"
                 disableRowSelectionOnClick
                 pageSizeOptions={[10, 50, 100]}
                 initialState={{ pagination: { paginationModel } }}
-                sx={{width: '80%', minWidth: 400}}
+                sx={{width: '100%'}}
             />
         </Box>
     );
