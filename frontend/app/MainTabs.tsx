@@ -59,7 +59,10 @@ export default function MainTabs() {
                 <IconButton onClick={() => window.location.reload()}>
                     <ReplayIcon/>
                 </IconButton>
-                <IconButton onClick={() => window.location.href = '/'}>
+                <IconButton onClick={() => {
+                    document.cookie = "permission=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    window.location.href = '/';
+                }}>
                     <LogoutIcon/>
                 </IconButton>
             </ButtonGroup>

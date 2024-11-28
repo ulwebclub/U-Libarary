@@ -1,6 +1,6 @@
 import {Utils} from "./Utils";
 import {Data} from "../../../common/Data";
-import {UserObject} from "../../../common/User";
+import {UserObject, UserRegisterObject, UserRole, UserUpdateObject} from "../../../common/User";
 
 export class User {
     data: UserObject[] = [];
@@ -16,11 +16,17 @@ export class User {
         return -1;
     }
 
+    _findLastUserId() {
+        return this.data.length
+    }
+
     get() {
         return this.db.getData().user;
     }
 
-    add(obj: UserObject) {
+    add(obj: UserRegisterObject) {
+        this.data = this.db.getData().user;
+
         if (obj.username.length === 0) {
             throw "Username should not be empty";
         }
@@ -30,17 +36,18 @@ export class User {
         if (obj.password.length === 0) {
             throw "Password should not be empty";
         }
-        if (obj.role.length === 0) {
-            throw "Role should not be empty";
+
+        let registerUser: UserObject = {
+            id: this._findLastUserId().toString(),
+            username: obj.username,
+            email: obj.email,
+            password: obj.password,
+            role: UserRole.User,
+            borrowedBook: [],
+            reservedBook: []
         }
 
-        let index = this._indexOf(obj.id);
-        if (index !== -1) {
-            throw "User already exists";
-        } else {
-            this.data.push(obj);
-        }
-
+        this.data.push(registerUser);
         this._update();
     }
 
@@ -55,14 +62,20 @@ export class User {
         this._update();
     }
 
-    update(obj: UserObject) {
+    update(obj: UserUpdateObject) {
         let index = this._indexOf(obj.id);
         if (index === -1) {
             throw "User not found";
         } else if (obj.id === "0") {
             throw "Modify Root Administrator is not allowed"
         }
-        this.data[index] = obj;
+
+        let updateUser = this.data[index];
+        updateUser.username = obj.username;
+        updateUser.email = obj.email;
+        updateUser.password = obj.password;
+
+        this.data[index] = updateUser;
         this._update();
     }
 

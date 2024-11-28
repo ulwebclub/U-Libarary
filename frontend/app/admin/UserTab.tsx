@@ -47,7 +47,9 @@ export default function UserTab() {
 
     useEffect(() => {
         getReq('/user').then((res) => {
-            setUsers(res.data);
+            if (res) {
+                setUsers(res);
+            }
         });
     }, []);
 

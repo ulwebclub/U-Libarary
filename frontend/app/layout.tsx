@@ -25,7 +25,7 @@ export default function RootLayout(props: {children: ReactNode}) {
             <ThemeProvider theme={theme}>
                 <ToastContainer
                     position="top-right"
-                    autoClose={5000}
+                    autoClose={2500}
                     closeOnClick
                     pauseOnFocusLoss
                     draggable
@@ -38,7 +38,7 @@ export default function RootLayout(props: {children: ReactNode}) {
                 }}>
                     <MainTabs/>
                     <Box sx={{
-                        flexGrow: 1, width: '100%', height: '100%',
+                        flexGrow: 1, width: '100%', height: '100%', pb: 3,
                         display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
                     }}>
                         {children}

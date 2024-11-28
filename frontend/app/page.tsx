@@ -3,11 +3,14 @@
 import {Box, Button, Card, CardActions, CardContent, CardMedia, TextField, Typography} from "@mui/material";
 import {useState} from "react";
 import {toast} from "react-toastify";
-import axios from "axios";
+import {postReq} from "@/app/net";
+import {useRegisterModal} from "@/app/RegisterModal";
+import {sha256} from "js-sha256";
 
 export default function Home() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [setOpen, RegisterModal] = useRegisterModal();
 
     function handleLogin() {
         if (!email) {
@@ -19,6 +22,23 @@ export default function Home() {
             return;
         }
         // login
+        postReq('/auth', {
+            email: email,
+            password: sha256(password)
+        }).then((res) => {
+            if (res) {
+                document.cookie = `permission=${res.value};path=${res.path};maxAge=${res.maxAge};httpOnly=${res.httpOnly}`;
+                toast.success("Login successfully", {
+                    toastId: 'login success',
+                    onClose: () => {
+                        window.location.href = '/borrow';
+                    },
+                    onClick: () => {
+                        window.location.href = '/borrow';
+                    }
+                });
+            }
+        });
     }
 
     return (
@@ -63,7 +83,7 @@ export default function Home() {
                             display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
                             width: '100%', pt: 1
                         }}>
-                            <Button>
+                            <Button onClick={() => setOpen(true)}>
                                 Register
                             </Button>
                             <Button
@@ -76,6 +96,7 @@ export default function Home() {
                     </Box>
                 </CardActions>
             </Box>
+            {RegisterModal}
         </Card>
     );
 }
