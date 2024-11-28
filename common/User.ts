@@ -10,6 +10,19 @@ export interface UserObject {
     reservedBook: string[];
 }
 
+export interface UserRegisterObject {
+    username: string;
+    email: string;
+    password: string;
+}
+
+export interface UserUpdateObject {
+    id: string;
+    username: string;
+    email: string;
+    password: string;
+}
+
 export enum UserRole {
     Admin = "Admin",
     User = "User",
