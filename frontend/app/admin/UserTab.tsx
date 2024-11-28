@@ -8,6 +8,7 @@ import {deleteReq, getReq} from "@/app/net";
 
 export default function UserTab() {
     const [users, setUsers] = useState<UserObject[]>([]);
+    const [loading, setLoading] = useState(false);
 
     const paginationModel = { page: 0, pageSize: 10 };
 
@@ -49,9 +50,11 @@ export default function UserTab() {
     }
 
     useEffect(() => {
+        setLoading(true);
         getReq('/user').then((res) => {
             if (res) {
                 setUsers(res);
+                setLoading(false);
             }
         });
     }, []);
@@ -64,6 +67,7 @@ export default function UserTab() {
             <DataGrid
                 rows={users}
                 columns={columns}
+                loading={loading}
                 editMode="row"
                 disableRowSelectionOnClick
                 pageSizeOptions={[10, 50, 100]}
