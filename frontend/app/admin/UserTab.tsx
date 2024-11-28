@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 import {UserObject, UserRole} from "../../../common/User";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {AutoCompleteEditCellBuilder} from "@/app/admin/AutoCompleteEditCell";
-import {getReq} from "@/app/net";
+import {deleteReq, getReq} from "@/app/net";
 
 export default function UserTab() {
     const [users, setUsers] = useState<UserObject[]>([]);
@@ -41,7 +41,10 @@ export default function UserTab() {
     function handleDeleteClick(row: UserObject) {
         const sure = confirm(`Make sure you want to delete user ${row.username}`);
         if (sure) {
-            setUsers(users.filter(user => user.id !== row.id));
+            deleteReq(`/user/delete/${row.id}`).then((res) => {
+                console.log(res);
+                setUsers(users.filter(user => user.id !== row.id));
+            });
         }
     }
 

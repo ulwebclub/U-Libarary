@@ -1,9 +1,10 @@
 import {Box} from "@mui/material";
 import {DataGrid, GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {InventoryObject, InventoryType} from "../../../common/Inventory";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import {AutoCompleteEditCellBuilder} from "@/app/admin/AutoCompleteEditCell";
+import {getReq} from "@/app/net";
 
 export default function BookTab() {
     const [items, setItems] = useState<InventoryObject[]>([]);
@@ -44,6 +45,14 @@ export default function BookTab() {
             setItems(items.filter(items => items.id !== row.id));
         }
     }
+
+    useEffect(() => {
+        getReq('/inventory/all').then((res) => {
+            if (res) {
+                setItems(res);
+            }
+        });
+    }, []);
 
     return (
         <Box sx={{
