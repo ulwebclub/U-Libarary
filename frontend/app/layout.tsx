@@ -38,7 +38,7 @@ export default function RootLayout(props: {children: ReactNode}) {
                 }}>
                     <MainTabs/>
                     <Box sx={{
-                        flexGrow: 1, width: '100%', height: '100%',
+                        flexGrow: 1, width: '100%', height: '100%', pb: 3,
                         display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
                     }}>
                         {children}

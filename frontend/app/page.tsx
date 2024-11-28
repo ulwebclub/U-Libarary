@@ -4,10 +4,12 @@ import {Box, Button, Card, CardActions, CardContent, CardMedia, TextField, Typog
 import {useState} from "react";
 import {toast} from "react-toastify";
 import {postReq} from "@/app/net";
+import {useRegisterModal} from "@/app/RegisterModal";
 
 export default function Home() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [setOpen, RegisterModal] = useRegisterModal();
 
     function handleLogin() {
         if (!email) {
@@ -73,7 +75,7 @@ export default function Home() {
                             display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
                             width: '100%', pt: 1
                         }}>
-                            <Button>
+                            <Button onClick={() => setOpen(true)}>
                                 Register
                             </Button>
                             <Button
@@ -86,6 +88,7 @@ export default function Home() {
                     </Box>
                 </CardActions>
             </Box>
+            {RegisterModal}
         </Card>
     );
 }
