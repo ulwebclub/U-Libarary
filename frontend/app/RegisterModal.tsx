@@ -2,6 +2,7 @@ import {Box, Button, Modal, Stack, TextField, Typography} from "@mui/material";
 import {ReactNode, useState} from "react";
 import {postReq} from "@/app/net";
 import {toast} from "react-toastify";
+import {sha256} from "js-sha256";
 
 const style = {
     position: 'absolute',
@@ -48,7 +49,7 @@ export function useRegisterModal() : [
             postReq('/user/add', {
                 email: email,
                 username: username,
-                password: password
+                password: sha256(password)
             }).then(() => {
                 setOpen(false);
                 toast.success("Register successfully");

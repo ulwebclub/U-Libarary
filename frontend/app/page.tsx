@@ -5,6 +5,7 @@ import {useState} from "react";
 import {toast} from "react-toastify";
 import {postReq} from "@/app/net";
 import {useRegisterModal} from "@/app/RegisterModal";
+import {sha256} from "js-sha256";
 
 export default function Home() {
     const [email, setEmail] = useState("");
@@ -23,12 +24,19 @@ export default function Home() {
         // login
         postReq('/auth', {
             email: email,
-            password: password
+            password: sha256(password)
         }).then((res) => {
             if (res) {
                 document.cookie = `permission=${res.value};path=${res.path};maxAge=${res.maxAge};httpOnly=${res.httpOnly}`;
-                toast.success("Login successfully");
-                window.location.href = '/borrow';
+                toast.success("Login successfully", {
+                    toastId: 'login success',
+                    onClose: () => {
+                        window.location.href = '/borrow';
+                    },
+                    onClick: () => {
+                        window.location.href = '/borrow';
+                    }
+                });
             }
         });
     }
