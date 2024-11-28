@@ -24,3 +24,16 @@ export interface InventoryBorrowObject {
 export interface InventoryReturnObject {
     id: string;
 }
+
+export const EMPTY_INVENTORY: InventoryObject = {
+    title: '',
+    type: InventoryType.Book,
+    author: '',
+    id: '',
+    isbn: '',
+    borrowed: false,
+    borrowedBy: '',
+    expectReturnTime: '',
+    reserved: false,
+    reservedBy: ''
+}
