@@ -18,7 +18,7 @@ export const inventoryGroup = new Elysia()
                 }
             },(app) => app
                 .post('add', ({ inventory, body: { data }, error }) => {
-                    inventory.add(data);
+                    return inventory.add(data);
                 }, {
                     body: t.Object({
                         data: t.Object({
@@ -61,7 +61,6 @@ export const inventoryGroup = new Elysia()
                 .post('borrow', ({ inventory, cookie: { permission },body: { data }, error }) => {
                     try {
                         inventory.borrow(data, permission.toString());
-                        return inventory.get();
                     } catch (e) {
                         return error(406, e);
                     }
@@ -76,7 +75,6 @@ export const inventoryGroup = new Elysia()
                 .post('return', ({ inventory, cookie: { permission },body: { data }, error }) => {
                     try {
                         inventory.unBorrow(data, permission.toString());
-                        return inventory.get();
                     } catch (e) {
                         return error(406, e);
                     }
