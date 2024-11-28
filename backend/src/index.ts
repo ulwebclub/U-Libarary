@@ -71,7 +71,7 @@ new Elysia()
                 return permission.cookie;
             }
         } catch (e) {
-            return error(401, e);
+            return error(403, e);
         }
     }, {
         body: t.Object({

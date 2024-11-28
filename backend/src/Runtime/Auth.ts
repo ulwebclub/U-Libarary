@@ -15,7 +15,7 @@ export class Auth {
                 return allUsers[i].role
             }
         }
-        throw "Unauthorized";
+        throw "Forbidden";
     }
 }
 
