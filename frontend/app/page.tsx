@@ -3,7 +3,7 @@
 import {Box, Button, Card, CardActions, CardContent, CardMedia, TextField, Typography} from "@mui/material";
 import {useState} from "react";
 import {toast} from "react-toastify";
-import axios from "axios";
+import {postReq} from "@/app/net";
 
 export default function Home() {
     const [email, setEmail] = useState("");
@@ -19,6 +19,16 @@ export default function Home() {
             return;
         }
         // login
+        postReq('/auth', {
+            email: email,
+            password: password
+        }).then((res) => {
+            if (res) {
+                document.cookie = `permission=${res.value};path=${res.path};maxAge=${res.maxAge};httpOnly=${res.httpOnly}`;
+                toast.success("Login successfully");
+                window.location.href = '/borrow';
+            }
+        });
     }
 
     return (
