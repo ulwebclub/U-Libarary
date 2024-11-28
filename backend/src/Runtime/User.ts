@@ -1,10 +1,16 @@
 import {Utils} from "./Utils";
 import {Data} from "../../../common/Data";
 import {UserObject, UserRegisterObject, UserRole, UserUpdateObject} from "../../../common/User";
+// @ts-ignore
+import base64 from "base-64";
 
 export class User {
     data: UserObject[] = [];
     db: Utils = new Utils();
+
+    _refreshData() {
+        this.data = this.db.getData().user;
+    }
 
     _indexOf(id: string) {
         this.data = this.db.getData().user;
@@ -20,12 +26,38 @@ export class User {
         return this.data.length
     }
 
+    _findUserByEmail(email: string): UserObject | null {
+        for (let i = 0; i < this.data.length; i++) {
+            if (this.data[i].email === email) {
+                return this.data[i];
+            }
+        }
+        return null;
+    }
+
+    _isAllowedDomain(email: string) {
+        let domain = email.split('@')[1];
+        let allowedDomain = this.db.getData().settings.allowedDomain;
+        return allowedDomain.includes(domain);
+    }
+
     get() {
         return this.db.getData().user;
     }
 
+    whoami(cookie: string) {
+        this._refreshData()
+
+        try {
+            let decodedEmail: string = JSON.parse(base64.decode(cookie.split(".")[1])).email;
+            return this._findUserByEmail(decodedEmail);
+        } catch (e) {
+            throw "Invalid Cookie";
+        }
+    }
+
     add(obj: UserRegisterObject) {
-        this.data = this.db.getData().user;
+        this._refreshData()
 
         if (obj.username.length === 0) {
             throw "Username should not be empty";
@@ -35,6 +67,12 @@ export class User {
         }
         if (obj.password.length === 0) {
             throw "Password should not be empty";
+        }
+        if (this._findUserByEmail(obj.email) !== null) {
+            throw "Email already exists";
+        }
+        if (!this._isAllowedDomain(obj.email)) {
+            throw "Email domain is not allowed";
         }
 
         let registerUser: UserObject = {
@@ -52,17 +90,27 @@ export class User {
     }
 
     delete(id: string) {
+        this._refreshData()
+
         let index = this._indexOf(id);
         if (index === -1) {
             throw "User not found";
         } else if (id === "0") {
             throw "Modify Root Administrator is not allowed"
         }
+        if (this.data[index].borrowedBook.length > 0) {
+            throw "User has borrowed books";
+        }
+        if (this.data[index].reservedBook.length > 0) {
+            throw "User has reserved books";
+        }
         this.data.splice(index, 1);
         this._update();
     }
 
     update(obj: UserUpdateObject) {
+        this._refreshData()
+
         let index = this._indexOf(obj.id);
         if (index === -1) {
             throw "User not found";
