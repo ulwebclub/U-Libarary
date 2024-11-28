@@ -9,6 +9,7 @@ export class Auth {
     data: UserObject[] = this.db.getData().user;
 
     checkAuth(email: string, password : string): string {
+        this.data = this.db.getData().user;
         let allUsers = this.data;
         for (let i = 0; i < allUsers.length; i++) {
             if (allUsers[i].email === email && allUsers[i].password === password) {
