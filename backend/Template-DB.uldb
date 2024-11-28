@@ -8,7 +8,53 @@
       "atcrea.tech"
     ]
   },
-  "user": [],
+  "user": [
+    {
+      "id": "0",
+      "username": "Administrator",
+      "email": "admin",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "Admin",
+      "borrowedBook": [],
+      "reservedBook": []
+    },
+    {
+      "id": "1",
+      "username": "Iewnfod",
+      "email": "ziqian.wu@ulink.cn",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "Admin",
+      "borrowedBook": [],
+      "reservedBook": []
+    },
+    {
+      "id": "2",
+      "username": "lightum_cc",
+      "email": "jessiezhu@createchstudio.com",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "Admin",
+      "borrowedBook": ["1"],
+      "reservedBook": []
+    },
+    {
+      "id": "3",
+      "username": "soap",
+      "email": "ze.lan@ulink.cn",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "User",
+      "borrowedBook": ["2"],
+      "reservedBook": []
+    },
+    {
+      "id": "4",
+      "username": "Lostelk",
+      "email": "zekai.lu@ulink.cn",
+      "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      "role": "User",
+      "borrowedBook": [],
+      "reservedBook": ["1"]
+    }
+  ],
   "inventory": [
     {
       "title": "Borrowed And Reserved Book",
