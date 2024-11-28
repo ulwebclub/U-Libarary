@@ -6,6 +6,7 @@ import {UserRole} from "../../../common/User";
 export const userGroup = new Elysia()
     .decorate('user', new User())
     .group('/user', (app) => app
+        .get('whoami', ({ user, cookie: { permission } }) => user.whoami( permission.toString() ))
         .post('add', ({ user, body: { data }, error }) => {
             try {
                 user.add(data);

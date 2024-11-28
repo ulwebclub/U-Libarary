@@ -16,6 +16,13 @@ export enum InventoryType {
     CD = 'CD'
 }
 
+export interface InventoryCreateObject {
+    type: InventoryType;
+    isbn: string;
+    author: string;
+    title: string;
+}
+
 export interface InventoryBorrowObject {
     id: string;
     expectReturnTime: string;

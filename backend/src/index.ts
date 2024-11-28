@@ -64,7 +64,7 @@ new Elysia()
             let authorizeAnswer = auth.checkAuth(email, password);
             if (authorizeAnswer !== "") {
                 permission.set({
-                    value: await jwt.sign({authorizeAnswer}),
+                    value: await jwt.sign({email, authorizeAnswer}),
                     httpOnly: true,
                     maxAge: 5 * 86400,
                 })
@@ -86,11 +86,11 @@ new Elysia()
             return true;
         }
         // @ts-ignore
-        if (token.authorizeAnswer === undefined || body.authorizeAnswer === undefined) {
+        if (token.authorizeAnswer === undefined || body.module === undefined) {
             return false
         }
         // @ts-ignore
-        return token.authorizeAnswer === body.authorizeAnswer;
+        return token.authorizeAnswer === body.module;
     }, {
         body: t.Object({
             module: t.String(),
