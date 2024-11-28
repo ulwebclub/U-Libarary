@@ -47,9 +47,11 @@ export function useRegisterModal() : [
             }
 
             postReq('/user/add', {
-                email: email,
-                username: username,
-                password: sha256(password)
+                data: {
+                    email: email,
+                    username: username,
+                    password: sha256(password)
+                }
             }).then(() => {
                 setOpen(false);
                 toast.success("Register successfully");
