@@ -5,8 +5,10 @@ export interface InventoryObject {
     id: string;
     isbn: string;
     borrowed: boolean;
+    borrowedBy: string;
     expectReturnTime: string;
     reserved: boolean;
+    reservedBy: string;
 }
 
 export enum InventoryType {
@@ -15,6 +17,10 @@ export enum InventoryType {
 }
 
 export interface InventoryBorrowObject {
-    isbn: string;
+    id: string;
     expectReturnTime: string;
+}
+
+export interface InventoryReturnObject {
+    id: string;
 }
