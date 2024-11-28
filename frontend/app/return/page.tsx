@@ -54,28 +54,9 @@ const ReturnDataGrid = styled(DataGrid)(({theme}) => ({
 }));
 
 export default function Page(){
-    // const temp1: InventoryObject = {
-    //     borrowedBy: "",
-    //     reservedBy: "",
-    //     title: "Book 1", type: InventoryType.Book, author: "Author 1", id: "1", isbn: "9788175257665", borrowed: true, expectReturnTime: "2024-10-27T09:00:00", reserved: false}
-    // const temp2: BorrowedInventoryObject = {
-    //     ...temp1,
-    //     overdue: isOverdue(temp1)
-    // };
-    //
-    // const temp3: InventoryObject = {
-    //     borrowedBy: "",
-    //     reservedBy: "",
-    //     title: "Book 1", type: InventoryType.Book, author: "Author 1", id: "8", isbn: "9788113257665", borrowed: true, expectReturnTime: "2024-12-27T09:00:00", reserved: false}
-    // const temp4: BorrowedInventoryObject = {
-    //     ...temp3,
-    //     overdue: isOverdue(temp3)
-    // };
-
     const [items, setItems] = useState<BorrowedInventoryObject[]>([]);
 
 
-    // @ts-ignore
     return (
         <Box sx = {{
             height: '100%', width: '80%', minWidth: 400,
