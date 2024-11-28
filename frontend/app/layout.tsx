@@ -34,11 +34,12 @@ export default function RootLayout(props: {children: ReactNode}) {
                 />
                 <Stack sx={{
                     position: 'absolute', top: 0, left: 0, m: 0, p: 0,
-                    width: '100vw', height: '100vh', overflow: 'hidden'
+                    width: '100vw', height: '100vh', overflow: 'hidden',
+                    alignItems: 'center'
                 }}>
                     <MainTabs/>
                     <Box sx={{
-                        flexGrow: 1, width: '100%', height: '100%', pb: 3,
+                        flexGrow: 1, width: '80%', height: '100%', pb: 3, minWidth: 400,
                         display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
                     }}>
                         {children}

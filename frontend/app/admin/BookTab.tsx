@@ -1,4 +1,4 @@
-import {Box, Button, ButtonGroup} from "@mui/material";
+import {Box, Button} from "@mui/material";
 import {DataGrid, GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
 import {useEffect, useState} from "react";
 import {EMPTY_INVENTORY, InventoryObject, InventoryType} from "../../../common/Inventory";
@@ -21,11 +21,11 @@ export default function BookTab() {
             editable: true,
             renderEditCell: AutoCompleteEditCellBuilder(Object.values(InventoryType))
         },
-        { field: 'isbn', headerName: 'ISBN', editable: true },
+        { field: 'isbn', headerName: 'ISBN', editable: true, minWidth: 150 },
         { field: 'author', headerName: 'Author', editable: true },
         { field: 'title', headerName: 'Title', editable: true, flex: 1 },
-        { field: 'borrowedBy', headerName: 'Borrowed By'},
-        { field: 'reservedBy', headerName: 'Reserved By'},
+        { field: 'borrowedBy', headerName: 'Borrowed By', minWidth: 150 },
+        { field: 'reservedBy', headerName: 'Reserved By', minWidth: 150 },
         {
             field: 'actions',
             type: 'actions',
@@ -44,6 +44,11 @@ export default function BookTab() {
     ];
 
     function handleDeleteClick(row: InventoryObject) {
+        if (row.id.length === 0) {
+            setItems(items.filter(items => items.id !== row.id));
+            return;
+        }
+
         const sure = confirm(`Make sure you want to delete this inventory`);
         if (sure) {
             setItems(items.filter(items => items.id !== row.id));
@@ -58,7 +63,8 @@ export default function BookTab() {
     }
 
     function handleSaveRow(row: InventoryObject) {
-
+        const index = items.findIndex(item => item.id === row.id);
+        if (index === -1) return;
     }
 
     useEffect(() => {
@@ -73,7 +79,7 @@ export default function BookTab() {
 
     return (
         <Box sx={{
-            width: '80%', height: '100%',
+            width: '100%', height: '100%',
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
         }}>
             <Box sx={{
@@ -98,7 +104,7 @@ export default function BookTab() {
                 onRowEditStop={(params) => {
                     handleSaveRow(params.row);
                 }}
-                sx={{width: '100%', minWidth: 400, flexGrow: 1}}
+                sx={{width: '100%', flexGrow: 1}}
             />
         </Box>
     );

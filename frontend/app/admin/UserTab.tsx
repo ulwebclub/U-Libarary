@@ -72,7 +72,7 @@ export default function UserTab() {
                 disableRowSelectionOnClick
                 pageSizeOptions={[10, 50, 100]}
                 initialState={{ pagination: { paginationModel } }}
-                sx={{width: '80%', minWidth: 400}}
+                sx={{width: '100%'}}
             />
         </Box>
     );
