@@ -41,7 +41,7 @@ export class Inventory {
     }
 
     _getNewId() {
-        return this.db.getData().inventory.length.toString();
+        return (this.db.getData().inventory.length + 1).toString();
     }
 
     get() {
