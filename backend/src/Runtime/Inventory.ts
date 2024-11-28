@@ -93,7 +93,7 @@ export class Inventory {
             if (this.inventoryData[index].reserved) {
                 throw "Inventory is Reserved"
             }
-            this.inventoryData.slice(index, 1);
+            this.inventoryData.splice(index, 1);
         }
         this._update()
     }
