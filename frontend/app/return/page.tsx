@@ -2,7 +2,14 @@
 
 import * as React from "react";
 import {useState} from "react";
-import {DataGrid, GridColDef, GridRenderCellParams, GridRowParams} from "@mui/x-data-grid";
+import {
+    DataGrid,
+    GridColDef,
+    GridRenderCellParams,
+    GridRowParams,
+    GridToolbarContainer,
+    GridToolbarExport, GridToolbarQuickFilter
+} from "@mui/x-data-grid";
 import {Box, Button, darken, lighten, styled, Theme} from "@mui/material";
 import {InventoryObject} from "../../../common/Inventory";
 import CloseIcon from '@mui/icons-material/Close';
@@ -118,6 +125,17 @@ export default function Page() {
         }
     };
 
+    function CustomToolbar() {
+        return (
+            <GridToolbarContainer sx={{justifyContent: 'space-between'}}>
+                <Box>
+                    <GridToolbarExport/>
+                </Box>
+                <GridToolbarQuickFilter/>
+            </GridToolbarContainer>
+        );
+    }
+
     const cols: GridColDef[] = [
         {field: "id", headerName: "ID", width: 60},
         {field: "title", headerName: "Title", width: 240},
@@ -195,6 +213,9 @@ export default function Page() {
                     setSelectedItems(newSelection as string[]);
                 }}
                 isRowSelectable={(params: GridRowParams) => params.row.reserved != DoneIcon}
+                slots={{
+                    toolbar: CustomToolbar
+                }}
             />
             <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', width: '100%'}}>
                 <Button
