@@ -1,6 +1,6 @@
 'use client'
 
-import {Box, Button, Card, CardActions, CardContent, CardMedia, TextField, Typography} from "@mui/material";
+import {Box, Button, Card, CardActions, CardContent, CardMedia, Stack, TextField, Typography} from "@mui/material";
 import {useState} from "react";
 import {toast} from "react-toastify";
 import {postReq} from "@/app/net";
@@ -80,15 +80,25 @@ export default function Home() {
                             display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
                             width: '100%', pt: 1
                         }}>
-                            <Button onClick={() => setOpen(true)}>
-                                Register
+                            <Button onClick={() => {
+                                toast("Please contact your system administrator!");
+                            }} color="error" size="small">
+                                Forget your account?
                             </Button>
-                            <Button
-                                variant="contained"
-                                onClick={() => handleLogin()}
-                            >
-                                Login
-                            </Button>
+                            <Stack direction="row" spacing={2}>
+                                <Button
+                                    variant="outlined"
+                                    onClick={() => setOpen(true)}
+                                >
+                                    Register
+                                </Button>
+                                <Button
+                                    variant="contained"
+                                    onClick={() => handleLogin()}
+                                >
+                                    Login
+                                </Button>
+                            </Stack>
                         </Box>
                     </Box>
                 </CardActions>

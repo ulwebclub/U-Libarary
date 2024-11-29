@@ -1,14 +1,19 @@
 import {Box} from "@mui/material";
-import {DataGrid, GridActionsCellItem, GridColDef} from "@mui/x-data-grid";
+import {DataGrid, GridActionsCellItem, GridColDef, useGridApiRef} from "@mui/x-data-grid";
 import {useEffect, useState} from "react";
 import {UserObject, UserRole} from "../../../common/User";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import PasswordIcon from '@mui/icons-material/Password';
 import {AutoCompleteEditCellBuilder} from "@/app/admin/AutoCompleteEditCell";
-import {deleteReq, getReq} from "@/app/net";
+import {deleteReq, getReq, postReq} from "@/app/net";
+import {toast} from "react-toastify";
+import {useResetPasswordModal} from "@/app/admin/ResetPasswordModal";
 
 export default function UserTab() {
     const [users, setUsers] = useState<UserObject[]>([]);
     const [loading, setLoading] = useState(false);
+    const [setOpen, setResetUser, ResetPasswordModal] = useResetPasswordModal();
+    const apiRef = useGridApiRef();
 
     const paginationModel = { page: 0, pageSize: 10 };
 
@@ -29,6 +34,12 @@ export default function UserTab() {
             getActions: ({row}) => {
                 return [
                     <GridActionsCellItem
+                        icon={<PasswordIcon/>}
+                        label="Reset Password"
+                        onClick={() => handleResetPassword(row)}
+                        color="inherit"
+                    />,
+                    <GridActionsCellItem
                         icon={<DeleteOutlineIcon/>}
                         label="Delete"
                         onClick={() => handleDeleteClick(row)}
@@ -39,14 +50,30 @@ export default function UserTab() {
         }
     ];
 
+    function handleResetPassword(row: UserObject) {
+        setResetUser(row);
+        setOpen(true);
+    }
+
     function handleDeleteClick(row: UserObject) {
         const sure = confirm(`Make sure you want to delete user ${row.username}`);
         if (sure) {
             deleteReq(`/user/delete/${row.id}`).then((res) => {
-                console.log(res);
-                setUsers(users.filter(user => user.id !== row.id));
+                if (res) {
+                    setUsers(users.filter(user => user.id !== row.id));
+                    toast.success("Delete successfully");
+                }
             });
         }
+    }
+
+    function handleSaveRow(id: string, field: string) {
+        const user = apiRef.current.getRowWithUpdatedValues(id, field);
+        postReq('/user/update', {
+            data: user
+        }).then(() => {
+            toast.success("Save successfully");
+        });
     }
 
     useEffect(() => {
@@ -65,6 +92,7 @@ export default function UserTab() {
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
         }}>
             <DataGrid
+                apiRef={apiRef}
                 rows={users}
                 columns={columns}
                 loading={loading}
@@ -72,8 +100,12 @@ export default function UserTab() {
                 disableRowSelectionOnClick
                 pageSizeOptions={[10, 50, 100]}
                 initialState={{ pagination: { paginationModel } }}
+                onRowEditStop={(params) => {
+                    handleSaveRow(params.id.toString(), params.field || "");
+                }}
                 sx={{width: '100%'}}
             />
+            {ResetPasswordModal}
         </Box>
     );
 }
