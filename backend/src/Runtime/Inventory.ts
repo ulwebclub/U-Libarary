@@ -48,6 +48,40 @@ export class Inventory {
         return this.db.getData().inventory;
     }
 
+    getPrivate() {
+        this._refreshData()
+
+        let noPermissionItems: InventoryObject[] = this.inventoryData;
+        for (let i = 0; i < this.inventoryData.length; i++) {
+            noPermissionItems[i].borrowed = false;
+            noPermissionItems[i].borrowedBy = ""
+            noPermissionItems[i].reserved = false;
+            noPermissionItems[i].reservedBy = ""
+        }
+
+        return noPermissionItems;
+    }
+
+    getMyItems(cookie: string) {
+        this._refreshData()
+
+        let decodedEmail: string = JSON.parse(base64.decode(cookie.split(".")[1])).email;
+        let myItems: InventoryObject[] = [];
+        for (let i = 0; i < this.inventoryData.length; i++) {
+            if (this.inventoryData[i].borrowedBy === decodedEmail) {
+                myItems.push(this.inventoryData[i]);
+                myItems[myItems.length - 1].reserved = false;
+                myItems[myItems.length - 1].reservedBy = "";
+            }
+            if (this.inventoryData[i].reservedBy === decodedEmail) {
+                myItems.push(this.inventoryData[i]);
+                myItems[myItems.length - 1].borrowed = false;
+                myItems[myItems.length - 1].borrowedBy = "";
+            }
+        }
+        return myItems;
+    }
+
     add(obj: InventoryCreateObject) {
         this._refreshData()
 
@@ -140,6 +174,9 @@ export class Inventory {
         if (indexInventory === -1) {
             throw "Inventory Not Found"
         } else {
+            if (this.inventoryData[indexInventory].borrowedBy !== decodedEmail) {
+                throw "Inventory has been Borrowed and not by you"
+            }
             if (this.inventoryData[indexInventory].borrowed) {
                 this.inventoryData[indexInventory].borrowed = false;
                 this.inventoryData[indexInventory].borrowedBy = "";
