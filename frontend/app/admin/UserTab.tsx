@@ -1,5 +1,12 @@
-import {Box} from "@mui/material";
-import {DataGrid, GridActionsCellItem, GridColDef, useGridApiRef} from "@mui/x-data-grid";
+import {Box, Button} from "@mui/material";
+import {
+    DataGrid,
+    GridActionsCellItem,
+    GridColDef,
+    GridToolbarContainer,
+    GridToolbarExport, GridToolbarQuickFilter,
+    useGridApiRef
+} from "@mui/x-data-grid";
 import {useEffect, useState} from "react";
 import {UserObject, UserRole} from "../../../common/User";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -8,6 +15,7 @@ import {AutoCompleteEditCellBuilder} from "@/app/admin/AutoCompleteEditCell";
 import {deleteReq, getReq, postReq} from "@/app/net";
 import {toast} from "react-toastify";
 import {useResetPasswordModal} from "@/app/admin/ResetPasswordModal";
+import AddIcon from "@mui/icons-material/Add";
 
 export default function UserTab() {
     const [users, setUsers] = useState<UserObject[]>([]);
@@ -76,6 +84,17 @@ export default function UserTab() {
         });
     }
 
+    function CustomToolbar() {
+        return (
+            <GridToolbarContainer sx={{justifyContent: 'space-between'}}>
+                <Box>
+                    <GridToolbarExport/>
+                </Box>
+                <GridToolbarQuickFilter/>
+            </GridToolbarContainer>
+        );
+    }
+
     useEffect(() => {
         setLoading(true);
         getReq('/user').then((res) => {
@@ -102,6 +121,9 @@ export default function UserTab() {
                 initialState={{ pagination: { paginationModel } }}
                 onRowEditStop={(params) => {
                     handleSaveRow(params.id.toString(), params.field || "");
+                }}
+                slots={{
+                    toolbar: CustomToolbar
                 }}
                 sx={{width: '100%'}}
             />
