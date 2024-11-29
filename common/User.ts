@@ -1,5 +1,3 @@
-import {InventoryObject} from "./Inventory";
-
 export interface UserObject {
     id: string;
     username: string;
@@ -21,6 +19,7 @@ export interface UserUpdateObject {
     username: string;
     email: string;
     password: string;
+    role: UserRole;
 }
 
 export enum UserRole {

@@ -124,6 +124,7 @@ export class User {
         updateUser.username = obj.username;
         updateUser.email = obj.email;
         updateUser.password = obj.password;
+        updateUser.role = obj.role;
 
         this.data[index] = updateUser;
         this._update();
