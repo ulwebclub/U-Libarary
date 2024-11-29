@@ -54,7 +54,7 @@ export class User {
             if (me) me.password = "";
             return me
         } catch (e) {
-            throw "Invalid Cookie";
+            return undefined;
         }
     }
 
@@ -124,6 +124,7 @@ export class User {
         updateUser.username = obj.username;
         updateUser.email = obj.email;
         updateUser.password = obj.password;
+        updateUser.role = obj.role;
 
         this.data[index] = updateUser;
         this._update();
