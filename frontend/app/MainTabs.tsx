@@ -3,6 +3,10 @@
 import {Box, ButtonGroup, IconButton, Tab, Tabs} from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import ReplayIcon from '@mui/icons-material/Replay';
+import {useEffect, useState} from "react";
+import {getReq} from "@/app/net";
+import {toast} from "react-toastify";
+import {UserObject, UserRole} from "../../common/User";
 
 type tabObject = {
     label: string,
@@ -17,10 +21,6 @@ const tabs: tabObject[] = [
     {
         label: "Return",
         route: '/return'
-    },
-    {
-        label: "Admin",
-        route: '/admin'
     }
 ];
 
@@ -32,6 +32,33 @@ function a11yProps(index: number) {
 }
 
 export default function MainTabs() {
+    const [showAdmin, setShowAdmin] = useState(false);
+
+    useEffect(() => {
+        getReq('/user/whoami').then((res: UserObject) => {
+            if (res) {
+                if (res.role === UserRole.Admin) {
+                    setShowAdmin(true);
+                } else {
+                    if (window.location.pathname === '/admin') {
+                        handleLogout();
+                    }
+                }
+            } else {
+                if (window.location.pathname !== '/') {
+                    handleLogout();
+                }
+            }
+        });
+    }, []);
+
+    function handleLogout() {
+        getReq('/auth/logout').then(() => {
+            toast.success("Logout successfully");
+            window.location.href = '/';
+        });
+    }
+
     return (
         <Box sx={{
             bgcolor: 'background.paper', display: 'flex',
@@ -54,15 +81,22 @@ export default function MainTabs() {
                         />
                     ))
                 }
+                {
+                    showAdmin ? (
+                        <Tab
+                            label="Admin"
+                            onClick={() => window.location.href = "/admin"}
+                            {...a11yProps(-1)}
+                            value="/admin"
+                        />
+                    ) : <></>
+                }
             </Tabs>
             <ButtonGroup sx={{cursor: 'pointer', pointerEvents: 'auto'}} variant="outlined">
                 <IconButton onClick={() => window.location.reload()}>
                     <ReplayIcon/>
                 </IconButton>
-                <IconButton onClick={() => {
-                    document.cookie = "permission=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                    window.location.href = '/';
-                }}>
+                <IconButton onClick={() => handleLogout()}>
                     <LogoutIcon/>
                 </IconButton>
             </ButtonGroup>

@@ -59,7 +59,7 @@ new Elysia()
         })
     })
     .decorate('auth', new Auth())
-    .post('/auth', async ({ auth, jwt, cookie: { permission } ,body: {email, password}}) => {
+    .post('/auth/login', async ({ auth, jwt, cookie: { permission } ,body: {email, password}}) => {
         try {
             let authorizeAnswer = auth.checkAuth(email, password);
             if (authorizeAnswer !== "") {
@@ -78,6 +78,9 @@ new Elysia()
             email: t.String(),
             password: t.String()
         })
+    })
+    .get('/auth/logout', ({ cookie: { permission } }) => {
+        permission.remove();
     })
     .post("/auth/check", async ({ jwt, body }) => {
         const token = await jwt.verify(body.cookie);

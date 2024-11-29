@@ -54,7 +54,7 @@ export class User {
             if (me) me.password = "";
             return me
         } catch (e) {
-            throw "Invalid Cookie";
+            return undefined;
         }
     }
 

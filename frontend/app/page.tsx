@@ -22,22 +22,19 @@ export default function Home() {
             return;
         }
         // login
-        postReq('/auth', {
+        postReq('/auth/login', {
             email: email,
             password: sha256(password)
-        }).then((res) => {
-            if (res) {
-                document.cookie = `permission=${res.value};path=${res.path};maxAge=${res.maxAge};httpOnly=${res.httpOnly}`;
-                toast.success("Login successfully", {
-                    toastId: 'login success',
-                    onClose: () => {
-                        window.location.href = '/borrow';
-                    },
-                    onClick: () => {
-                        window.location.href = '/borrow';
-                    }
-                });
-            }
+        }).then(() => {
+            toast.success("Login successfully", {
+                toastId: 'login success',
+                onClose: () => {
+                    window.location.href = '/borrow';
+                },
+                onClick: () => {
+                    window.location.href = '/borrow';
+                }
+            });
         });
     }
 
