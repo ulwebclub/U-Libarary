@@ -1,5 +1,13 @@
 import {Box, Button} from "@mui/material";
-import {DataGrid, GridActionsCellItem, GridColDef, GridRowId, useGridApiRef} from "@mui/x-data-grid";
+import {
+    DataGrid,
+    GridActionsCellItem,
+    GridColDef,
+    GridRowId,
+    GridToolbarContainer,
+    GridToolbarExport, GridToolbarQuickFilter,
+    useGridApiRef
+} from "@mui/x-data-grid";
 import {useEffect, useState} from "react";
 import {EMPTY_INVENTORY, InventoryObject, InventoryType} from "../../../common/Inventory";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -96,6 +104,23 @@ export default function BookTab() {
         }
     }
 
+    function CustomToolbar() {
+        return (
+            <GridToolbarContainer sx={{justifyContent: 'space-between'}}>
+                <Box>
+                    <Button
+                        startIcon={<AddIcon/>}
+                        onClick={() => handleNewItem()}
+                    >
+                        New Inventory
+                    </Button>
+                    <GridToolbarExport/>
+                </Box>
+                <GridToolbarQuickFilter/>
+            </GridToolbarContainer>
+        );
+    }
+
     useEffect(() => {
         setLoading(true);
         getReq('/inventory/all').then((res) => {
@@ -111,17 +136,6 @@ export default function BookTab() {
             width: '100%', height: '100%',
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
         }}>
-            <Box sx={{
-                width: '100%', gap: 1,
-                display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center',
-            }}>
-                <Button
-                    startIcon={<AddIcon/>}
-                    onClick={() => handleNewItem()}
-                >
-                    New Inventory
-                </Button>
-            </Box>
             <DataGrid
                 apiRef={apiRef}
                 rows={items}
@@ -133,6 +147,9 @@ export default function BookTab() {
                 initialState={{ pagination: { paginationModel } }}
                 onRowEditStop={(params) => {
                     handleSaveRow(params.id, params.field || "");
+                }}
+                slots={{
+                    toolbar: CustomToolbar
                 }}
                 sx={{width: '100%', flexGrow: 1}}
             />
