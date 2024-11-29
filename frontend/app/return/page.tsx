@@ -3,15 +3,21 @@
 import * as React from "react";
 import {useState} from "react";
 import {DataGrid, GridColDef, GridRenderCellParams} from "@mui/x-data-grid";
-import {Box, Button, darken, lighten, PaletteColor, styled, Theme} from "@mui/material";
-import {InventoryObject, InventoryType} from "../../../common/Inventory";
+import {Box, Button, darken, lighten, styled, Theme} from "@mui/material";
+import {InventoryObject} from "../../../common/Inventory";
 import CloseIcon from '@mui/icons-material/Close';
 import DoneIcon from '@mui/icons-material/Done';
 import {SvgIconComponent} from "@mui/icons-material";
+import { useEffect } from 'react';
+import { getReq } from '../net';
+import { postReq } from '../net';
+import {toast} from "react-toastify";
+
 
 export interface BorrowedInventoryObject extends InventoryObject {
     overdue: SvgIconComponent;
 }
+
 
 function isOverdue(item: InventoryObject) {
     const now = new Date();
@@ -19,7 +25,9 @@ function isOverdue(item: InventoryObject) {
     return now > expectReturnTime ? DoneIcon : CloseIcon;
 }
 
+
 const paginationModel = {page: 0, pageSize: 10};
+
 
 const getBackgroundColor = (color: string, theme: Theme, coefficient: number) => ({
     backgroundColor: darken(color, coefficient),
@@ -27,6 +35,7 @@ const getBackgroundColor = (color: string, theme: Theme, coefficient: number) =>
         backgroundColor: lighten(color, coefficient),
     }),
 });
+
 
 const ReturnDataGrid = styled(DataGrid)(({theme}) => ({
     '& .highlighted-row': {
@@ -43,8 +52,66 @@ const ReturnDataGrid = styled(DataGrid)(({theme}) => ({
     },
 }));
 
+
 export default function Page() {
-    const [items, setItems] = useState<BorrowedInventoryObject[]>([]);
+    const [items, setItems] = useState<InventoryObject[]>([]);
+    const [selectedItems, setSelectedItems] = useState<string[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const [userData, inventoryData] = await Promise.all([
+                    getReq('user/whoami'),
+                    getReq('inventory/all')
+                ]);
+                // Filter items borrowed by current user
+                const userBorrowedItems = inventoryData
+                    .filter((item: InventoryObject) => item.borrowedBy === userData.email)
+                    .map((item: InventoryObject) => ({
+                        ...item,
+                        overdue: isOverdue(item)
+                    }));
+                setItems(userBorrowedItems);
+            } catch (error) {
+                toast.error("Failed to fetch data");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+
+    const handleReturn = async () => {
+        try {
+            await Promise.all(
+                selectedItems.map(id =>
+                    postReq('inventory/return', {
+                        data: { id }
+                    })
+                )
+            );
+// Update local state by removing returned items
+            const updatedItems = items.filter(item => !selectedItems.includes(item.id));
+            setItems(updatedItems);
+            setSelectedItems([]);
+            toast.success("Items returned successfully");
+        } catch (error) {
+            toast.error("Failed to return some items");
+            // Refresh the list to show current state
+            const inventoryData = await getReq('inventory/all');
+            const userData = await getReq('user/whoami');
+            const userBorrowedItems = inventoryData
+                .filter((item: InventoryObject) => item.borrowedBy === userData.email)
+                .map((item: InventoryObject) => ({
+                    ...item,
+                    overdue: isOverdue(item)
+                }));
+            setItems(userBorrowedItems);
+        }
+    };
 
     const cols: GridColDef[] = [
         {field: "id", headerName: "ID", width: 60},
@@ -65,7 +132,27 @@ export default function Page() {
                 </Box>;
             }
         },
+        {
+            field: "expectReturnTime",
+            headerName: "Return Status",
+            width: 150,
+            renderCell: (params: GridRenderCellParams) => {
+                return getRemainingTime(params.value);
+            }
+        },
     ];
+
+    function getRemainingTime(expectReturnTime: string): string {
+        const now = new Date();
+        const returnTime = new Date(expectReturnTime);
+        const diffTime = returnTime.getTime() - now.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays < 0) {
+            return `Overdue by ${Math.abs(diffDays)} days`;
+        }
+        return `${diffDays} days remaining`;
+    }
 
     return (
         <Box sx={{
@@ -74,6 +161,7 @@ export default function Page() {
             gap: 2, p: 3
         }}>
             <ReturnDataGrid
+                loading={loading}
                 columns={cols}
                 rows={items}
                 pageSizeOptions={[10, 25, 50, 100]}
@@ -85,10 +173,15 @@ export default function Page() {
                     minWidth: 375
                 }}
                 getRowClassName={(params) => params.row.overdue == DoneIcon ? 'highlighted-row' : ''}
+                onRowSelectionModelChange={(newSelection) => {
+                    setSelectedItems(newSelection as string[]);
+                }}
             />
             <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', width: '100%'}}>
                 <Button
                     variant="contained"
+                    onClick={handleReturn}
+                    disabled={selectedItems.length === 0}
                 >
                     Return selected
                 </Button>
