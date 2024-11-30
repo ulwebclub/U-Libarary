@@ -6,6 +6,7 @@ import {UserRole} from "../../../common/User";
 
 dotenv.config();
 const adminPasswordHash = sha256(process.env.LIB_ADMIN_PASSWORD || "123456");
+const allowRegDomain = process.env.LIB_ALLOW_REG_DOMAIN || "createchstudio.com";
 
 export class Utils {
     private readonly dbFile: string;
@@ -27,8 +28,22 @@ export class Utils {
     initAuth(adminHash: string) {
         let newData: Data = this.getData();
         newData.user = [
-            {id: "0", username: "Administator", email: "admin", password: adminHash, role: UserRole.Admin}
+            {
+                id: "0",
+                username: "Administator",
+                email: "admin",
+                password: adminHash,
+                role: UserRole.Admin,
+                borrowedBook: [],
+                reservedBook: []
+            }
         ];
+        this.updateData(newData);
+    }
+
+    initAllowRegDomain(allowRegDomain: string) {
+        let newData: Data = this.getData();
+        newData.settings.allowedDomain = allowRegDomain.split(",");
         this.updateData(newData);
     }
 
@@ -38,6 +53,8 @@ export class Utils {
             console.log('Utils created successfully with default data');
             this.initAuth(adminPasswordHash);
             console.log('Auth updated successfully');
+            this.initAllowRegDomain(allowRegDomain);
+            console.log('Allowed registration domain updated successfully');
         } else {
             console.log('Utils already exists');
         }
