@@ -48,16 +48,26 @@ export class Inventory {
         return this.db.getData().inventory;
     }
 
-    getPrivate() {
+    getAvailable(cookie: string) {
         this._refreshData()
 
-        let noPermissionItems: InventoryObject[] = this.inventoryData;
+        let decodedEmail: string = JSON.parse(base64.decode(cookie.split(".")[1])).email;
+        let availableItems: InventoryObject[] = [];
         for (let i = 0; i < this.inventoryData.length; i++) {
-            noPermissionItems[i].borrowedBy = ""
-            noPermissionItems[i].reservedBy = ""
+            if (!this.inventoryData[i].borrowed && !this.inventoryData[i].reserved) {
+                availableItems.push(this.inventoryData[i]);
+                availableItems[availableItems.length - 1].reserved = false;
+                availableItems[availableItems.length - 1].reservedBy = "";
+            }
+            if (this.inventoryData[i].reserved && this.inventoryData[i].reservedBy === decodedEmail) {
+                availableItems.push(this.inventoryData[i]);
+                availableItems[availableItems.length - 1].borrowed = false;
+                availableItems[availableItems.length - 1].borrowedBy = "";
+                availableItems[availableItems.length - 1].expectReturnTime = "";
+            }
         }
 
-        return noPermissionItems;
+        return availableItems;
     }
 
     getMyItems(cookie: string) {
