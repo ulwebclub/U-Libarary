@@ -173,6 +173,9 @@ export default function Page() {
             headerName: "Return Status",
             width: 150,
             renderCell: (params: GridRenderCellParams) => {
+                if (params.row.reserved == DoneIcon) {
+                    return "Not Borrowed Yet"
+                }
                 return getRemainingTime(params.value);
             }
         },
