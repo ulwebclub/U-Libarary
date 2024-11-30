@@ -148,11 +148,16 @@ export default function Page() {
             width: 80,
             renderCell: (params: GridRenderCellParams) => {
                 const Icon = params.value;
-                return <Box sx={{
-                    height: '100%', width: '100%',
-                    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
-                }}> < Icon/>
-                </Box>;
+                return (
+                    <Box
+                        sx={{
+                            height: '100%', width: '100%',
+                            display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
+                        }}
+                    >
+                        <Icon style={{ color: params.value === DoneIcon ? "green" : "red" }} />
+                    </Box>
+                );
             }
         },
         {
@@ -161,11 +166,16 @@ export default function Page() {
             width: 80,
             renderCell: (params: GridRenderCellParams) => {
                 const Icon = params.value;
-                return <Box sx={{
-                    height: '100%', width: '100%',
-                    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
-                }}> < Icon/>
-                </Box>;
+                return (
+                    <Box
+                        sx={{
+                            height: '100%', width: '100%',
+                            display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
+                        }}
+                    >
+                        <Icon style={{ color: params.value === DoneIcon ? "green" : "red" }} />
+                    </Box>
+                );
             }
         },
         {
@@ -215,7 +225,6 @@ export default function Page() {
                 onRowSelectionModelChange={(newSelection) => {
                     setSelectedItems(newSelection as string[]);
                 }}
-                isRowSelectable={(params: GridRowParams) => params.row.reserved != DoneIcon}
                 slots={{
                     toolbar: CustomToolbar
                 }}
