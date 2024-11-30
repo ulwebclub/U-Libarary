@@ -67,7 +67,7 @@ export default function MainTabs() {
         }}>
             <Tabs
                 variant="standard"
-                value={window.location.pathname}
+                value={typeof window !== 'undefined' ? window.location.pathname : ''}
                 sx={{flexGrow: 1}}
             >
                 {
