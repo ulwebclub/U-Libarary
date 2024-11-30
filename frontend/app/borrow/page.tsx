@@ -9,15 +9,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import {InventoryObject} from "../../../common/Inventory";
 import {getReq, postReq} from "@/app/net";
 import {toast} from "react-toastify";
-import {Close} from "@mui/icons-material";
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import error = toast.error;
-import {getInputValueAsString} from "@mui/base/unstable_useNumberInput/useNumberInput";
 
 const cols = [
     {field: "id", headerName: "ID", width: 60},
@@ -25,30 +22,6 @@ const cols = [
     {field: "author", headerName: "Author", width: 165, flex: 0},
     {field: "type", headerName: "Type", width: 60},
     {field: "isbn", headerName: "ISBN", width: 135},
-    /*{field: "borrowed", headerName: "Borrowed?", width: 90,
-        renderCell: (params: any) => (
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center", // Center vertically
-                    justifyContent: "center", // Center horizontally
-                    width: "100%",
-                    height: "100%",
-                }}
-            >
-                {params.value ? (
-                    <CheckIcon style={{ color: "green" }} />
-                ) : (
-                    <CloseIcon style={{ color: "#d00000" }} />
-                )}
-            </Box>
-        ),
-    },*/
-    /*{field: "expectReturnTime", headerName: "Expected return time", width: 150,
-        renderCell: (params: any) => (
-            convertToDisplayedDate(params.value)
-        )
-    },*/
     {field: "reserved", headerName: "Reserved?", width: 90,
         renderCell: (params: any) => (
             <Box
@@ -63,33 +36,21 @@ const cols = [
                 {params.value ? (
                     <CheckIcon style={{ color: "green" }} />
                 ) : (
-                    <CloseIcon style={{ color: "#d00000" }} />
+                    <CloseIcon style={{ color: "red" }} />
                 )}
             </Box>
         ),
     },
 ];
 
-/*
-{title: "Book 1", type: InventoryType.Book, author: "Author 1", id: "1", isbn: "9788175257665", borrowed: true,
-expectReturnTime: "2024/12/31", reserved: false}
-*/
-
 const paginationModel = { page: 0, pageSize: 10 };
-
-function calcReturnDate(borrowDays: number): string {
-    const expectReturnDate = new Date();
-    expectReturnDate.setDate(expectReturnDate.getDate() + borrowDays);
-    return expectReturnDate.toISOString().slice(0, 19);
-}
 
 export default function Page() {
     const [displayItems, setDisplayItems] = useState<InventoryObject[]>([]);
     const [loading, setLoading] = useState(false);
     const [selectedItems, setSelectedItems] = useState<string[]>([]);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [borrowDays, setBorrowDays] = useState<number>(0);
-    const [textFieldError, setTextFieldError] = useState<boolean>(false);
+    const [borrowDays, setBorrowDays] = useState<string>("");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -105,12 +66,12 @@ export default function Page() {
                 setLoading(false);
             }
         };
-        fetchData();
+        fetchData().then(r => {});
     }, []);
 
     const handleBorrow = async () => {
         try {
-            const expectReturnTime: string = calcReturnDate(borrowDays);
+            const expectReturnTime: string = borrowDays; // 直接使用 borrowDays
             await Promise.all(
                 selectedItems.map(id =>
                     postReq('inventory/borrow', {
@@ -131,21 +92,10 @@ export default function Page() {
 
     const handleTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const inputValue = event.target.value;
-        if (/^\d*$/.test(inputValue)) {
-            const intValue = parseInt(inputValue, 10);
-
-            if (inputValue === "" || (intValue >= 1 && intValue <= 365)) {
-                setBorrowDays(intValue);
-                setTextFieldError(false);
-            } else {
-                setTextFieldError(true);
-            }
-        }
+        const borrowDate = new Date(inputValue);
+        const formattedDate = borrowDate.toISOString().slice(0, 19);
+        setBorrowDays(formattedDate);
     };
-
-
-    // const items = getReq("/inventory/all");
-    // setDisplayItems(items);
 
     function CustomToolbar() {
         return (
@@ -159,8 +109,16 @@ export default function Page() {
     }
 
     function handleDialogOpen() {
-        // console.log("Dialog opened");
-        setDialogOpen(true);
+        const allBorrowed = selectedItems.every(id => {
+            const item = displayItems.find(item => item.id === id);
+            return item?.borrowed;
+        });
+
+        if (allBorrowed) {
+            handleBorrow().then(() => setDialogOpen(false));
+        } else {
+            setDialogOpen(true);
+        }
     }
 
     function handleDialogClose() {
@@ -174,9 +132,7 @@ export default function Page() {
                 height: '100%',
                 justifyContent: 'center',
                 alignItems: 'center',
-                // position: 'sticky',
                 top: 0,
-                // zIndex: 'tooltip',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 2,
@@ -217,8 +173,7 @@ export default function Page() {
                     component: 'form',
                     onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
                         event.preventDefault();
-                        handleBorrow()
-                        handleDialogClose();
+                        handleBorrow().then(r => handleDialogClose());
                     },
                 }}
             >
@@ -234,19 +189,22 @@ export default function Page() {
                         id={"numberOfDays"}
                         name=""
                         label=""
-                        type="number"
+                        type="date"
                         fullWidth
                         variant="standard"
                         onChange={handleTextFieldChange}
-                        error={textFieldError}
-                        helperText={textFieldError ? "Value must be between 1 and 365." : ""}
+                        slotProps={{
+                            htmlInput: {
+                                min: new Date().toISOString().split("T")[0],
+                                max: new Date(new Date().setMonth(new Date().getMonth() + 1)).toISOString().split("T")[0]
+                            }
+                        }}
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDialogClose}>Cancel</Button>
                     <Button
                         type="submit"
-                        disabled={textFieldError}
                     >
                         Borrow
                     </Button>
@@ -255,8 +213,3 @@ export default function Page() {
         </React.Fragment>
     );
 }
-
-// 大家好，我是typescript练习时长两天半的web练习生，喜欢编，猜，乱hook，瞎let
-// Music!
-
-// 有借无还，再借……你就借不了啦，还会喜提overdue
