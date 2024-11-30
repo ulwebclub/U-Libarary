@@ -56,14 +56,11 @@ export class Inventory {
         for (let i = 0; i < this.inventoryData.length; i++) {
             if (!this.inventoryData[i].borrowed && !this.inventoryData[i].reserved) {
                 availableItems.push(this.inventoryData[i]);
-                availableItems[availableItems.length - 1].reserved = false;
-                availableItems[availableItems.length - 1].reservedBy = "";
-            }
-            if (this.inventoryData[i].reserved && this.inventoryData[i].reservedBy === decodedEmail) {
+            } else if (this.inventoryData[i].borrowed && this.inventoryData[i].borrowedBy !== decodedEmail && !this.inventoryData[i].reserved) {
                 availableItems.push(this.inventoryData[i]);
-                availableItems[availableItems.length - 1].borrowed = false;
                 availableItems[availableItems.length - 1].borrowedBy = "";
-                availableItems[availableItems.length - 1].expectReturnTime = "";
+            } else if (!this.inventoryData[i].borrowed && this.inventoryData[i].reserved && this.inventoryData[i].reservedBy === decodedEmail) {
+                availableItems.push(this.inventoryData[i]);
             }
         }
 
@@ -182,17 +179,16 @@ export class Inventory {
         if (indexInventory === -1) {
             throw "Inventory Not Found"
         } else {
-            if (this.inventoryData[indexInventory].borrowedBy !== decodedEmail) {
-                throw "Inventory has been Borrowed and not by you"
-            }
-            if (this.inventoryData[indexInventory].borrowed) {
+            if (this.inventoryData[indexInventory].borrowed && this.inventoryData[indexInventory].borrowedBy === decodedEmail) {
                 this.inventoryData[indexInventory].borrowed = false;
                 this.inventoryData[indexInventory].borrowedBy = "";
                 this.inventoryData[indexInventory].expectReturnTime = "";
                 this.userData[indexUser].borrowedBook = this.userData[indexUser].borrowedBook.filter((item) => item !== obj.id);
-            } else {
-                throw "Inventory is not Borrowed"
-            }
+            } else if (this.inventoryData[indexInventory].reserved && this.inventoryData[indexInventory].reservedBy === decodedEmail) {
+                this.inventoryData[indexInventory].reserved = false;
+                this.inventoryData[indexInventory].reservedBy = "";
+                this.userData[indexUser].reservedBook = this.userData[indexUser].reservedBook.filter((item) => item !== obj.id);
+            } else throw "Inventory is not Borrowed by you"
         }
         this._update()
     }
