@@ -53,9 +53,7 @@ export class Inventory {
 
         let noPermissionItems: InventoryObject[] = this.inventoryData;
         for (let i = 0; i < this.inventoryData.length; i++) {
-            noPermissionItems[i].borrowed = false;
             noPermissionItems[i].borrowedBy = ""
-            noPermissionItems[i].reserved = false;
             noPermissionItems[i].reservedBy = ""
         }
 
