@@ -65,7 +65,7 @@ export const inventoryGroup = new Elysia()
                     return await checkJWT(permission.value || "", "User", error)
                 }
             },(app) => app
-                .get('private', ({ inventory }) => inventory.getPrivate())
+                .get('available', ({ inventory, cookie: { permission } }) => inventory.getAvailable(permission.toString()))
                 .get('my', ({ inventory, cookie: { permission } }) => inventory.getMyItems(permission.toString()))
                 .post('borrow', ({ inventory, cookie: { permission },body: { data }, error }) => {
                     try {
