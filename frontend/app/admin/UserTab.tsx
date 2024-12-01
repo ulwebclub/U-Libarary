@@ -117,7 +117,7 @@ export default function UserTab() {
                 loading={loading}
                 editMode="row"
                 disableRowSelectionOnClick
-                pageSizeOptions={[10, 50, 100]}
+                pageSizeOptions={[10, 25, 50, 100]}
                 initialState={{ pagination: { paginationModel } }}
                 onRowEditStop={(params) => {
                     handleSaveRow(params.id.toString(), params.field || "");
@@ -128,6 +128,7 @@ export default function UserTab() {
                 sx={{width: '100%'}}
             />
             {ResetPasswordModal}
+            <Box sx = {{height: 100}}></Box>
         </Box>
     );
 }

@@ -155,7 +155,7 @@ export default function Page() {
                             display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
                         }}
                     >
-                        <Icon style={{ color: params.value === DoneIcon ? "green" : "red" }} />
+                        <Icon style={{ color: params.value === DoneIcon ? "green" : "#d00000" }} />
                     </Box>
                 );
             }
@@ -173,7 +173,7 @@ export default function Page() {
                             display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
                         }}
                     >
-                        <Icon style={{ color: params.value === DoneIcon ? "green" : "red" }} />
+                        <Icon style={{ color: params.value === DoneIcon ? "green" : "#d00000" }} />
                     </Box>
                 );
             }
@@ -218,8 +218,7 @@ export default function Page() {
                 checkboxSelection={true}
                 hideFooterSelectedRowCount={false}
                 sx={{
-                    width: '100%',
-                    minWidth: 375
+                    width: '100%'
                 }}
                 getRowClassName={(params) => params.row.overdue == DoneIcon ? 'highlighted-row' : ''}
                 onRowSelectionModelChange={(newSelection) => {
@@ -238,6 +237,7 @@ export default function Page() {
                     Return selected
                 </Button>
             </Box>
+            <Box sx = {{height: 48}}></Box>
         </Box>
     );
 }

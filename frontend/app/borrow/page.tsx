@@ -36,7 +36,7 @@ const cols = [
                 {params.value ? (
                     <CheckIcon style={{ color: "green" }} />
                 ) : (
-                    <CloseIcon style={{ color: "red" }} />
+                    <CloseIcon style={{ color: "#d00000" }} />
                 )}
             </Box>
         ),
@@ -165,6 +165,7 @@ export default function Page() {
                         </Button>
                     </Stack>
                 </Box>
+                <Box sx={{height: 48}}></Box>
             </Box>
             <Dialog
                 open={dialogOpen}

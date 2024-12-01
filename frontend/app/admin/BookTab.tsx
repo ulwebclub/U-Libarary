@@ -143,7 +143,7 @@ export default function BookTab() {
                 loading={loading}
                 editMode="row"
                 disableRowSelectionOnClick
-                pageSizeOptions={[10, 50, 100]}
+                pageSizeOptions={[10, 25, 50, 100]}
                 initialState={{ pagination: { paginationModel } }}
                 onRowEditStop={(params) => {
                     handleSaveRow(params.id, params.field || "");
@@ -153,6 +153,7 @@ export default function BookTab() {
                 }}
                 sx={{width: '100%', flexGrow: 1}}
             />
+            <Box sx = {{height: 100}}></Box>
         </Box>
     );
 }
