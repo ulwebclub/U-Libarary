@@ -159,7 +159,6 @@ export default function BookTab() {
                     }
                 }}
             />
-            <Box sx = {{height: 100}}></Box>
         </Box>
     );
 }

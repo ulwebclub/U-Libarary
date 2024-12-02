@@ -133,7 +133,6 @@ export default function UserTab() {
                 }}
             />
             {ResetPasswordModal}
-            <Box sx = {{height: 100}}></Box>
         </Box>
     );
 }
