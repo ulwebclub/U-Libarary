@@ -149,7 +149,13 @@ export default function Page() {
                     onRowSelectionModelChange={(newSelection) => {
                         setSelectedItems(newSelection as string[]);
                     }}
-                    sx={{width: '100%'}}
+                    sx={{
+                        width: '100%', height: '100%',
+                        '& .MuiDataGrid-main': {
+                            maxHeight: 'calc(100vh - 250px)',
+                            overflowY: 'auto'
+                        }
+                    }}
                     slots={{
                         toolbar: CustomToolbar
                     }}
