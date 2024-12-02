@@ -15,6 +15,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import dayjs from 'dayjs';
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
+
 
 const cols = [
     {field: "id", headerName: "ID", width: 60},
@@ -34,9 +40,9 @@ const cols = [
                 }}
             >
                 {params.value ? (
-                    <CheckIcon style={{ color: "green" }} />
+                    <CheckIcon color="success" />
                 ) : (
-                    <CloseIcon style={{ color: "#d00000" }} />
+                    <CloseIcon color="error" />
                 )}
             </Box>
         ),
@@ -53,9 +59,9 @@ const cols = [
                 }}
             >
                 {params.value ? (
-                    <CheckIcon style={{ color: "green" }} />
+                    <CheckIcon color="success" />
                 ) : (
-                    <CloseIcon style={{ color: "#d00000" }} />
+                    <CloseIcon color="error" />
                 )}
             </Box>
         ),
@@ -72,7 +78,8 @@ export default function Page() {
     const [selectedItems, setSelectedItems] = useState<string[]>([]);
     const [dateDialogOpen, setDateDialogOpen] = useState(false);
     const [reserveDialogOpen, setReserveDialogOpen] = useState(false);
-    const [borrowDays, setBorrowDays] = useState<string>("");
+    const [borrowDueDate, setBorrowDueDate] = useState<string>("");
+    const [dateOfToday, setDateOfToday] = useState<Date>(new Date());
 
     useEffect(() => {
         const fetchData = async () => {
@@ -93,7 +100,7 @@ export default function Page() {
 
     const handleBorrow = async () => {
         try {
-            const expectReturnTime: string = borrowDays; // 直接使用 borrowDays
+            const expectReturnTime: string = borrowDueDate;
             await Promise.all(
                 borrowingItems.map(id =>
                     postReq('inventory/borrow', {
@@ -114,7 +121,7 @@ export default function Page() {
 
     const handleReserve = async () => {
         try {
-            const expectReturnTime: string = borrowDays; // 直接使用 borrowDays
+            const expectReturnTime: string = borrowDueDate;
             await Promise.all(
                 reservingItems.map(id =>
                     postReq('inventory/borrow', {
@@ -133,11 +140,11 @@ export default function Page() {
         }
     }
 
-    const handleTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleDateFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const inputValue = event.target.value;
         const borrowDate = new Date(inputValue);
         const formattedDate = borrowDate.toISOString().slice(0, 19);
-        setBorrowDays(formattedDate);
+        setBorrowDueDate(formattedDate);
     };
 
     function CustomToolbar() {
@@ -152,6 +159,9 @@ export default function Page() {
     }
 
     function handleDialogOpen() {
+        const now = new Date();
+        setDateOfToday(now);
+
         const allBorrowedByOthers = selectedItems.every(id => {
             const item = displayItems.find(item => item.id === id);
             return item?.borrowed;
@@ -269,6 +279,14 @@ export default function Page() {
                     <DialogContentText>
                         For the items you borrow, which day are you going to return them?
                     </DialogContentText>
+                    {/*<LocalizationProvider dateAdapter = {AdapterDayjs}>
+                        <StaticDatePicker
+                            defaultValue = {dayjs(dateOfToday)}
+                            view = "day"
+                            minDate = {dateOfToday.toISOString()}
+                            maxDate = {dateOfToday.toISOString()}
+                        />
+                    </LocalizationProvider>*/}
                     <TextField
                         autoFocus
                         required
@@ -279,7 +297,7 @@ export default function Page() {
                         type="date"
                         fullWidth
                         variant="standard"
-                        onChange={handleTextFieldChange}
+                        onChange={handleDateFieldChange}
                         slotProps={{
                             htmlInput: {
                                 min: new Date().toISOString().split("T")[0],

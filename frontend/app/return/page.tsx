@@ -155,7 +155,7 @@ export default function Page() {
                             display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
                         }}
                     >
-                        <Icon style={{ color: params.value === DoneIcon ? "green" : "#d00000" }} />
+                        <Icon color={params.value === DoneIcon ? "success" : "error" } />
                     </Box>
                 );
             }
@@ -173,7 +173,7 @@ export default function Page() {
                             display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
                         }}
                     >
-                        <Icon style={{ color: params.value === DoneIcon ? "green" : "#d00000" }} />
+                        <Icon color={params.value === DoneIcon ? "success" : "error" } />
                     </Box>
                 );
             }
