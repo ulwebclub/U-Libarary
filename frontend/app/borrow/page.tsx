@@ -15,6 +15,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import dayjs from 'dayjs';
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
+
 
 const cols = [
     {field: "id", headerName: "ID", width: 60},
@@ -22,6 +28,25 @@ const cols = [
     {field: "author", headerName: "Author", width: 165, flex: 0},
     {field: "type", headerName: "Type", width: 60},
     {field: "isbn", headerName: "ISBN", width: 135},
+    {field: "borrowed", headerName: "Borrowed by others?", width: 150,
+        renderCell: (params: any) => (
+            <Box
+                sx={{
+                    display: "flex",
+                    alignItems: "center", // Center vertically
+                    justifyContent: "center", // Center horizontally
+                    width: "100%",
+                    height: "100%",
+                }}
+            >
+                {params.value ? (
+                    <CheckIcon color="success" />
+                ) : (
+                    <CloseIcon color="error" />
+                )}
+            </Box>
+        ),
+    },
     {field: "reserved", headerName: "Reserved?", width: 90,
         renderCell: (params: any) => (
             <Box
@@ -34,9 +59,9 @@ const cols = [
                 }}
             >
                 {params.value ? (
-                    <CheckIcon style={{ color: "green" }} />
+                    <CheckIcon color="success" />
                 ) : (
-                    <CloseIcon style={{ color: "red" }} />
+                    <CloseIcon color="error" />
                 )}
             </Box>
         ),
@@ -47,10 +72,14 @@ const paginationModel = { page: 0, pageSize: 10 };
 
 export default function Page() {
     const [displayItems, setDisplayItems] = useState<InventoryObject[]>([]);
+    const [borrowingItems, setBorrowingItems] = useState<string[]>([]);
+    const [reservingItems, setReservingItems] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const [selectedItems, setSelectedItems] = useState<string[]>([]);
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [borrowDays, setBorrowDays] = useState<string>("");
+    const [dateDialogOpen, setDateDialogOpen] = useState(false);
+    const [reserveDialogOpen, setReserveDialogOpen] = useState(false);
+    const [borrowDueDate, setBorrowDueDate] = useState<string>("");
+    const [dateOfToday, setDateOfToday] = useState<Date>(new Date());
 
     useEffect(() => {
         const fetchData = async () => {
@@ -71,9 +100,9 @@ export default function Page() {
 
     const handleBorrow = async () => {
         try {
-            const expectReturnTime: string = borrowDays; // 直接使用 borrowDays
+            const expectReturnTime: string = borrowDueDate;
             await Promise.all(
-                selectedItems.map(id =>
+                borrowingItems.map(id =>
                     postReq('inventory/borrow', {
                         data: {id, expectReturnTime}
                     })
@@ -84,17 +113,38 @@ export default function Page() {
             ]);
             setSelectedItems([]);
             setDisplayItems(inventoryData);
-            toast.success(`${selectedItems.length} item${(selectedItems.length != 1 ? 's' : '')} borrowed successfully`);
+            toast.success(`${borrowingItems.length} item${(borrowingItems.length != 1 ? 's' : '')} borrowed successfully`);
         } catch (error) {
             toast.error("Failed to borrow items");
         }
     }
 
-    const handleTextFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleReserve = async () => {
+        try {
+            const expectReturnTime: string = borrowDueDate;
+            await Promise.all(
+                reservingItems.map(id =>
+                    postReq('inventory/borrow', {
+                        data: {id, expectReturnTime}
+                    })
+                )
+            );
+            const [inventoryData] = await Promise.all([
+                getReq('inventory/available')
+            ]);
+            setSelectedItems([]);
+            setDisplayItems(inventoryData);
+            toast.success(`${reservingItems.length} item${(reservingItems.length != 1 ? 's' : '')} reserved successfully`);
+        } catch (error) {
+            toast.error("Failed to reserve items");
+        }
+    }
+
+    const handleDateFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const inputValue = event.target.value;
         const borrowDate = new Date(inputValue);
         const formattedDate = borrowDate.toISOString().slice(0, 19);
-        setBorrowDays(formattedDate);
+        setBorrowDueDate(formattedDate);
     };
 
     function CustomToolbar() {
@@ -109,20 +159,61 @@ export default function Page() {
     }
 
     function handleDialogOpen() {
-        const allBorrowed = selectedItems.every(id => {
+        const now = new Date();
+        setDateOfToday(now);
+
+        const allBorrowedByOthers = selectedItems.every(id => {
             const item = displayItems.find(item => item.id === id);
             return item?.borrowed;
         });
 
-        if (allBorrowed) {
-            handleBorrow().then(() => setDialogOpen(false));
+        const noneBorrowedByOthers = selectedItems.every(id => {
+            const item = displayItems.find(item => item.id === id);
+            return !item?.borrowed;
+        });
+
+        console.log(allBorrowedByOthers);
+        console.log(noneBorrowedByOthers);
+
+        let itemsToBeReserved: string[] = [];
+        let itemsToBeBorrowed: string[] = [];
+
+        for (let i:number = 0; i < selectedItems.length; i++) {
+            const item = displayItems.find(item => item.id === selectedItems[i]);
+            if (item?.borrowed == true) {
+                itemsToBeReserved.push(item.id)
+            } else if (item?.borrowed == false) {
+                itemsToBeBorrowed.push(item.id);
+            }
+        }
+
+        setReservingItems(itemsToBeReserved);
+        setBorrowingItems(itemsToBeBorrowed);
+
+        console.log(itemsToBeReserved.length);
+
+        if (noneBorrowedByOthers) {
+            setDateDialogOpen(true);
         } else {
-            setDialogOpen(true);
+            setReserveDialogOpen(true);
         }
     }
 
     function handleDialogClose() {
-        setDialogOpen(false);
+        setDateDialogOpen(false);
+    }
+
+    function handleReserveDialogClose() {
+        setReserveDialogOpen(false);
+
+        const allBorrowedByOthers = selectedItems.every(id => {
+            const item = displayItems.find(item => item.id === id);
+            return item?.borrowed;
+        });
+
+        if (!allBorrowedByOthers) {
+            setDateDialogOpen(true);
+        }
     }
 
     return (
@@ -173,7 +264,7 @@ export default function Page() {
                 </Box>
             </Box>
             <Dialog
-                open={dialogOpen}
+                open={dateDialogOpen}
                 onClose={handleDialogClose}
                 PaperProps={{
                     component: 'form',
@@ -186,8 +277,16 @@ export default function Page() {
                 <DialogTitle>Borrow</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        How many days are you going to keep the items for?
+                        For the items you borrow, which day are you going to return them?
                     </DialogContentText>
+                    {/*<LocalizationProvider dateAdapter = {AdapterDayjs}>
+                        <StaticDatePicker
+                            defaultValue = {dayjs(dateOfToday)}
+                            view = "day"
+                            minDate = {dateOfToday.toISOString()}
+                            maxDate = {dateOfToday.toISOString()}
+                        />
+                    </LocalizationProvider>*/}
                     <TextField
                         autoFocus
                         required
@@ -198,7 +297,7 @@ export default function Page() {
                         type="date"
                         fullWidth
                         variant="standard"
-                        onChange={handleTextFieldChange}
+                        onChange={handleDateFieldChange}
                         slotProps={{
                             htmlInput: {
                                 min: new Date().toISOString().split("T")[0],
@@ -213,6 +312,32 @@ export default function Page() {
                         type="submit"
                     >
                         Borrow
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                open={reserveDialogOpen}
+                onClose={handleReserveDialogClose}
+                PaperProps={{
+                    component: 'form',
+                    onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+                        event.preventDefault();
+                        handleReserve().then(r => handleReserveDialogClose());
+                    },
+                }}
+            >
+                <DialogTitle>Reserve</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Some items you selected are borrowed by others. Do you want to reserve them?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleReserveDialogClose}>Cancel</Button>
+                    <Button
+                        type="submit"
+                    >
+                        Reserve
                     </Button>
                 </DialogActions>
             </Dialog>
