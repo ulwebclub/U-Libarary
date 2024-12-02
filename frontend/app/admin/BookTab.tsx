@@ -151,7 +151,13 @@ export default function BookTab() {
                 slots={{
                     toolbar: CustomToolbar
                 }}
-                sx={{width: '100%', flexGrow: 1}}
+                sx={{
+                    width: '100%', height: '100%',
+                    '& .MuiDataGrid-main': {
+                        maxHeight: 'calc(100vh - 200px)',
+                        overflowY: 'auto'
+                    }
+                }}
             />
             <Box sx = {{height: 100}}></Box>
         </Box>

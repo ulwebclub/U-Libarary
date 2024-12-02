@@ -1,4 +1,4 @@
-import {Box, Button} from "@mui/material";
+import {Box} from "@mui/material";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -15,7 +15,6 @@ import {AutoCompleteEditCellBuilder} from "@/app/admin/AutoCompleteEditCell";
 import {deleteReq, getReq, postReq} from "@/app/net";
 import {toast} from "react-toastify";
 import {useResetPasswordModal} from "@/app/admin/ResetPasswordModal";
-import AddIcon from "@mui/icons-material/Add";
 
 export default function UserTab() {
     const [users, setUsers] = useState<UserObject[]>([]);
@@ -125,7 +124,13 @@ export default function UserTab() {
                 slots={{
                     toolbar: CustomToolbar
                 }}
-                sx={{width: '100%'}}
+                sx={{
+                    width: '100%', height: '100%',
+                    '& .MuiDataGrid-main': {
+                        maxHeight: 'calc(100vh - 200px)',
+                        overflowY: 'auto'
+                    }
+                }}
             />
             {ResetPasswordModal}
             <Box sx = {{height: 100}}></Box>

@@ -218,7 +218,11 @@ export default function Page() {
                 checkboxSelection={true}
                 hideFooterSelectedRowCount={false}
                 sx={{
-                    width: '100%'
+                    width: '100%', height: '100%',
+                    '& .MuiDataGrid-main': {
+                        maxHeight: 'calc(100vh - 250px)',
+                        overflowY: 'auto'
+                    }
                 }}
                 getRowClassName={(params) => params.row.overdue == DoneIcon ? 'highlighted-row' : ''}
                 onRowSelectionModelChange={(newSelection) => {
@@ -237,7 +241,6 @@ export default function Page() {
                     Return selected
                 </Button>
             </Box>
-            <Box sx = {{height: 48}}></Box>
         </Box>
     );
 }

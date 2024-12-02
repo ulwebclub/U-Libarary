@@ -44,6 +44,14 @@ export default function MainTabs() {
                         handleLogout();
                     }
                 }
+
+                if (window.location.pathname === '/') {
+                    if (res.role === UserRole.User) {
+                        window.location.href = '/borrow';
+                    } else {
+                        window.location.href = '/admin';
+                    }
+                }
             } else {
                 if (window.location.pathname !== '/') {
                     handleLogout();
