@@ -1,7 +1,7 @@
 "use client"
 
 import {Box, Tab, Tabs} from "@mui/material";
-import {ReactNode, useState} from "react";
+import {ReactNode, useEffect, useState} from "react";
 import BookTab from "@/app/admin/BookTab";
 import UserTab from "@/app/admin/UserTab";
 
@@ -21,6 +21,8 @@ const tabs: tabObject[] = [
     }
 ];
 
+const TAB_KEY = "tab";
+
 function a11yProps(index: number) {
     return {
         id: `vertical-tab-${index}`,
@@ -34,6 +36,19 @@ export default function Page() {
     function TabContent() {
         return tabs[tabIndex].element;
     }
+
+    function handleSetIndex(index: number) {
+        const url = new URL(window.location.href);
+        url.search = `${TAB_KEY}=${index}`;
+        history.pushState({}, "", url);  // prevent refresh
+        setTabIndex(index);
+    }
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const recordIndex = parseInt(params.get(TAB_KEY) || "0");
+        setTabIndex(recordIndex);
+    }, []);
 
     return (
         <Box sx={{
@@ -50,7 +65,7 @@ export default function Page() {
                         <Tab
                             label={tab.label}
                             key={index}
-                            onClick={() => setTabIndex(index)}
+                            onClick={() => handleSetIndex(index)}
                             {...a11yProps(index)}
                         />
                     ))
