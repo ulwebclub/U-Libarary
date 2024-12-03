@@ -15,12 +15,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import dayjs from 'dayjs';
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
-
 
 const cols = [
     {field: "id", headerName: "ID", width: 60},
