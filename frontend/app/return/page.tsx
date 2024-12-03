@@ -2,7 +2,14 @@
 
 import * as React from "react";
 import {useState} from "react";
-import {DataGrid, GridColDef, GridRenderCellParams} from "@mui/x-data-grid";
+import {
+    DataGrid,
+    GridColDef,
+    GridRenderCellParams,
+    GridRowParams,
+    GridToolbarContainer,
+    GridToolbarExport, GridToolbarQuickFilter
+} from "@mui/x-data-grid";
 import {Box, Button, darken, lighten, styled, Theme} from "@mui/material";
 import {InventoryObject} from "../../../common/Inventory";
 import CloseIcon from '@mui/icons-material/Close';
@@ -23,6 +30,10 @@ function isOverdue(item: InventoryObject) {
     const now = new Date();
     const expectReturnTime = new Date(item.expectReturnTime);
     return now > expectReturnTime ? DoneIcon : CloseIcon;
+}
+
+function isReserved(item: InventoryObject) {
+    return item.reserved ? DoneIcon : CloseIcon;
 }
 
 
@@ -64,13 +75,13 @@ export default function Page() {
             try {
                 const [userData, inventoryData] = await Promise.all([
                     getReq('user/whoami'),
-                    getReq('inventory/all')
+                    getReq('inventory/my')
                 ]);
                 // Filter items borrowed by current user
                 const userBorrowedItems = inventoryData
-                    .filter((item: InventoryObject) => item.borrowedBy === userData.email)
                     .map((item: InventoryObject) => ({
                         ...item,
+                        reserved: isReserved(item),
                         overdue: isOverdue(item)
                     }));
                 setItems(userBorrowedItems);
@@ -93,7 +104,7 @@ export default function Page() {
                     })
                 )
             );
-// Update local state by removing returned items
+            // Update local state by removing returned items
             const updatedItems = items.filter(item => !selectedItems.includes(item.id));
             setItems(updatedItems);
             setSelectedItems([]);
@@ -101,17 +112,29 @@ export default function Page() {
         } catch (error) {
             toast.error("Failed to return some items");
             // Refresh the list to show current state
-            const inventoryData = await getReq('inventory/all');
+            const inventoryData = await getReq('inventory/my');
             const userData = await getReq('user/whoami');
             const userBorrowedItems = inventoryData
                 .filter((item: InventoryObject) => item.borrowedBy === userData.email)
                 .map((item: InventoryObject) => ({
                     ...item,
+                    reserved: isReserved(item),
                     overdue: isOverdue(item)
                 }));
             setItems(userBorrowedItems);
         }
     };
+
+    function CustomToolbar() {
+        return (
+            <GridToolbarContainer sx={{justifyContent: 'space-between'}}>
+                <Box>
+                    <GridToolbarExport/>
+                </Box>
+                <GridToolbarQuickFilter/>
+            </GridToolbarContainer>
+        );
+    }
 
     const cols: GridColDef[] = [
         {field: "id", headerName: "ID", width: 60},
@@ -120,16 +143,39 @@ export default function Page() {
         {field: "type", headerName: "Type", width: 60},
         {field: "isbn", headerName: "ISBN", width: 135},
         {
+            field: "reserved",
+            headerName: "Reserved?",
+            width: 80,
+            renderCell: (params: GridRenderCellParams) => {
+                const Icon = params.value;
+                return (
+                    <Box
+                        sx={{
+                            height: '100%', width: '100%',
+                            display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
+                        }}
+                    >
+                        <Icon color={params.value === DoneIcon ? "success" : "error" } />
+                    </Box>
+                );
+            }
+        },
+        {
             field: "overdue",
             headerName: "Overdue?",
             width: 80,
             renderCell: (params: GridRenderCellParams) => {
                 const Icon = params.value;
-                return <Box sx={{
-                    height: '100%', width: '100%',
-                    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
-                }}> < Icon/>
-                </Box>;
+                return (
+                    <Box
+                        sx={{
+                            height: '100%', width: '100%',
+                            display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
+                        }}
+                    >
+                        <Icon color={params.value === DoneIcon ? "success" : "error" } />
+                    </Box>
+                );
             }
         },
         {
@@ -137,6 +183,9 @@ export default function Page() {
             headerName: "Return Status",
             width: 150,
             renderCell: (params: GridRenderCellParams) => {
+                if (params.row.reserved == DoneIcon) {
+                    return "Not Borrowed Yet"
+                }
                 return getRemainingTime(params.value);
             }
         },
@@ -169,12 +218,18 @@ export default function Page() {
                 checkboxSelection={true}
                 hideFooterSelectedRowCount={false}
                 sx={{
-                    width: '100%',
-                    minWidth: 375
+                    width: '100%', height: '100%',
+                    '& .MuiDataGrid-main': {
+                        maxHeight: 'calc(100vh - 250px)',
+                        overflowY: 'auto'
+                    }
                 }}
                 getRowClassName={(params) => params.row.overdue == DoneIcon ? 'highlighted-row' : ''}
                 onRowSelectionModelChange={(newSelection) => {
                     setSelectedItems(newSelection as string[]);
+                }}
+                slots={{
+                    toolbar: CustomToolbar
                 }}
             />
             <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', width: '100%'}}>

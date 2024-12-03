@@ -143,7 +143,7 @@ export default function BookTab() {
                 loading={loading}
                 editMode="row"
                 disableRowSelectionOnClick
-                pageSizeOptions={[10, 50, 100]}
+                pageSizeOptions={[10, 25, 50, 100]}
                 initialState={{ pagination: { paginationModel } }}
                 onRowEditStop={(params) => {
                     handleSaveRow(params.id, params.field || "");
@@ -151,7 +151,13 @@ export default function BookTab() {
                 slots={{
                     toolbar: CustomToolbar
                 }}
-                sx={{width: '100%', flexGrow: 1}}
+                sx={{
+                    width: '100%', height: '100%',
+                    '& .MuiDataGrid-main': {
+                        maxHeight: 'calc(100vh - 200px)',
+                        overflowY: 'auto'
+                    }
+                }}
             />
         </Box>
     );

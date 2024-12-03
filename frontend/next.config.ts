@@ -8,7 +8,8 @@ const nextConfig: NextConfig = {
                 destination: 'http://localhost:3000/:path*'
             }
         ];
-    }
+    },
+    distDir: 'build',
 };
 
 export default nextConfig;

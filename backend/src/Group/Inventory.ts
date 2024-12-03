@@ -6,7 +6,6 @@ import {InventoryType} from "../../../common/Inventory";
 export const inventoryGroup = new Elysia()
     .decorate('inventory', new Inventory())
     .group('/inventory', (app) => app
-        .get('all', ({ inventory }) => inventory.get())
         // Guard of Admin Actions
         .guard(
             {
@@ -17,6 +16,7 @@ export const inventoryGroup = new Elysia()
                     return await checkJWT(permission.value || "", "Admin", error)
                 }
             },(app) => app
+                .get('all', ({ inventory }) => inventory.get())
                 .post('add', ({ inventory, body: { data }, error }) => {
                     return inventory.add(data);
                 }, {
@@ -65,6 +65,8 @@ export const inventoryGroup = new Elysia()
                     return await checkJWT(permission.value || "", "User", error)
                 }
             },(app) => app
+                .get('available', ({ inventory, cookie: { permission } }) => inventory.getAvailable(permission.toString()))
+                .get('my', ({ inventory, cookie: { permission } }) => inventory.getMyItems(permission.toString()))
                 .post('borrow', ({ inventory, cookie: { permission },body: { data }, error }) => {
                     try {
                         inventory.borrow(data, permission.toString());

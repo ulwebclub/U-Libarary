@@ -25,7 +25,7 @@ export default function RootLayout(props: {children: ReactNode}) {
             <ThemeProvider theme={theme}>
                 <ToastContainer
                     position="top-right"
-                    autoClose={2500}
+                    autoClose={2000}
                     closeOnClick
                     pauseOnFocusLoss
                     draggable
