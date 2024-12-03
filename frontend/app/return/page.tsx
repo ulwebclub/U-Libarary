@@ -137,7 +137,7 @@ export default function Page() {
 
     const cols: GridColDef[] = [
         {field: "id", headerName: "ID", width: 60},
-        {field: "title", headerName: "Title", width: 240},
+        {field: "title", headerName: "Title", width: 240, flex: 1},
         {field: "author", headerName: "Author", width: 165},
         {field: "type", headerName: "Type", width: 60},
         {field: "isbn", headerName: "ISBN", width: 135},
